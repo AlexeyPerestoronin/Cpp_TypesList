@@ -1,0 +1,8 @@
+# forbidden file extensions
+**/*.log
+
+# forbidden catalogs
+tests/googletest
+.vscode/
+build/
+libs/
