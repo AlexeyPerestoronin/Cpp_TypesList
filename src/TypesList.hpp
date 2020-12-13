@@ -10,6 +10,7 @@ constexpr static const char* DescriptionOfType = description_value;
 
 // TL - Types Lists
 namespace TL {
+#pragma region TypeInfo
     // SECTION: TypeInfo
     // brief: if Type is compatibility - provides information about type; compilation error - vise versa
     // note: for convenient of applying use it via TYPE_INFO-define
@@ -25,28 +26,72 @@ namespace TL {
     template<>
     struct TypeInfo<uint8_t> {
         constexpr static const char* name = "uint8_t";
-        constexpr static const char* description = "standart unsigned integer STL-type";
+        constexpr static const char* description = "8-bit size unsigned integer STL-type";
     };
 
     template<>
     struct TypeInfo<uint16_t> {
         constexpr static const char* name = "uint16_t";
-        constexpr static const char* description = "standart unsigned integer STL-type";
+        constexpr static const char* description = "16-bit size unsigned integer STL-type";
     };
 
     template<>
     struct TypeInfo<uint32_t> {
         constexpr static const char* name = "uint32_t";
-        constexpr static const char* description = "standart unsigned integer STL-type";
+        constexpr static const char* description = "32-bit size unsigned integer STL-type";
     };
 
     template<>
     struct TypeInfo<uint64_t> {
         constexpr static const char* name = "uint64_t";
-        constexpr static const char* description = "standart unsigned integer STL-type";
+        constexpr static const char* description = "64-bit size unsigned integer STL-type";
     };
 
+    template<>
+    struct TypeInfo<int8_t> {
+        constexpr static const char* name = "int8_t";
+        constexpr static const char* description = "8-bit size integer STL-type";
+    };
 
+    template<>
+    struct TypeInfo<int16_t> {
+        constexpr static const char* name = "int16_t";
+        constexpr static const char* description = "16-bit size integer STL-type";
+    };
+
+    template<>
+    struct TypeInfo<int32_t> {
+        constexpr static const char* name = "int32_t";
+        constexpr static const char* description = "32-bit size integer STL-type";
+    };
+
+    template<>
+    struct TypeInfo<int64_t> {
+        constexpr static const char* name = "int64_t";
+        constexpr static const char* description = "64-bit size integer STL-type";
+    };
+
+    template<>
+    struct TypeInfo<char> {
+        constexpr static const char* name = "char";
+        constexpr static const char* description = "system-dependent-size standart one-symbol-type";
+    };
+
+    template<>
+    struct TypeInfo<char16_t> {
+        constexpr static const char* name = "char16_t";
+        constexpr static const char* description = "16-bit size STL-one-symbol-type";
+    };
+
+    template<>
+    struct TypeInfo<char32_t> {
+        constexpr static const char* name = "char32_t";
+        constexpr static const char* description = "16-bit size STL-one-symbol-type";
+    };
+#pragma endregion
+
+
+#pragma region TypesList
     // SECTION: TypesList
     // WARNING: do not use it directly
     // brief: base struct of TL-logic
@@ -66,8 +111,10 @@ namespace TL {
         using Result = TypesList<Head, Tail>;
         constexpr static uint8_t size = 1 + Tail::size;
     };
+#pragma endregion
 
 
+#pragma region CreateTypesList
     // SECTION: CreateTypesList
     // brief: creates arbitrary length list of types
     // Result: list of target types
@@ -94,8 +141,10 @@ namespace TL {
 
         using Result = NullType;
     };
+#pragma endregion
 
 
+#pragma region GetTypeByIndex
     // SECTION: GetTypeByIndex
     // brief: get Type from TypesList by index
     // Result: Type by index from TypesList - if exist; compilation error - vise versa
@@ -126,8 +175,10 @@ namespace TL {
 
         using Result = Head;
     };
+#pragma endregion
 
 
+#pragma region GetIndexByType
     // SECTION: GetIndexByType
     // brief: get index inside TypesList by which target Type is placed
     // Result: index by which the Type is placed inside the TypesList
@@ -158,8 +209,10 @@ namespace TL {
 
         constexpr static uint8_t Result = 0;
     };
+#pragma endregion
 
 
+#pragma region IsInList
     // SECTION: IsInList
     // brief: check if Type is in TypesList
     // Result: true - if Type is into TypesList; false - vise versa
@@ -193,6 +246,52 @@ namespace TL {
 
         constexpr static bool Result = true;
     };
+#pragma endregion
+
+
+#pragma region AppendBack
+    // SECTION: AppendBack
+    // brief: appends one type or arbitrary length types list inside the target TypesList
+    // Result: new list of types consisting of all types from the target TypesList and additional type(or types)
+    // example 1: TL::AppendBack<TL::CreateTypesList<int8_t>::Result, int16_t>::Result // -> [int8_t, int16_t]
+    // example 2: TL::AppendBack<INTs_t, char>::Result // -> [int8_t, int16_t, int32_t, int64_t, char]
+    // example 3: TL::AppendBack<INTs_t, UINTs_t>::Result // -> [int8_t, int16_t, int32_t, int64_t, uint8_t, uint16_t, uint32_t, uint64_t]
+
+    template<class TypesList_t, class Type>
+    struct AppendBack {
+        TYPE_INFO("AppendBack", "appends one type or arbitrary length types list inside the target TypesList: use only with TypesList-struct");
+
+        static_assert(std::is_same_v<TypesList_t, TypesList>, "forbidden to apply AppendBack-struct to not TypesList-struct");
+    };
+
+    template<class Head, class Tail, class Type>
+    struct AppendBack<TypesList<Head, Tail>, Type> {
+        TYPE_INFO("AppendBack", "appends one type or arbitrary length types list inside the target TypesList: use only with TypesList-struct");
+
+        using Result = TypesList<Head, typename AppendBack<Tail, Type>::Result>;
+    };
+
+    template<class Head, class Type>
+    struct AppendBack<TypesList<Head, NullType>, Type> {
+        TYPE_INFO("AppendBack", "appends one type or arbitrary length types list inside the target TypesList: use only with TypesList-struct");
+
+        using Result = TypesList<Head, TypesList<Type, NullType>>;
+    };
+
+    template<class Head1, class Head2, class Tail2>
+    struct AppendBack<TypesList<Head1, NullType>, TypesList<Head2, Tail2>> {
+        TYPE_INFO("AppendBack", "appends one type or arbitrary length types list inside the target TypesList: use only with TypesList-struct");
+
+        using Result = typename AppendBack<TypesList<Head1, TypesList<Head2, NullType>>, Tail2>::Result;
+    };
+
+    template<class Head1, class Head2>
+    struct AppendBack<TypesList<Head1, NullType>, TypesList<Head2, NullType>> {
+        TYPE_INFO("AppendBack", "appends one type or arbitrary length types list inside the target TypesList: use only with TypesList-struct");
+
+        using Result = TypesList<Head1, TypesList<Head2, NullType>>;
+    };
+#pragma endregion
 }
 
 #endif // __TYPES_LIST__
