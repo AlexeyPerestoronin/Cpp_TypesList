@@ -2,7 +2,6 @@
 **/*.log
 
 # forbidden catalogs
-tests/googletest
 .vscode/
 build/
 libs/
