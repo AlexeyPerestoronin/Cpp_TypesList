@@ -111,6 +111,9 @@ namespace TL {
         using Result = TypesList<Head, Tail>;
         constexpr static uint8_t size = 1 + Tail::size;
     };
+
+    template<class Head, class Tail>
+    using TypesList_R = typename TypesList<Head, Tail>::Result;
 #pragma endregion
 
 
@@ -125,14 +128,14 @@ namespace TL {
     struct CreateTypesList {
         TYPE_INFO("CreateTypesList", "creates arbitrary length list of types");
 
-        using Result = typename TypesList<Type, typename CreateTypesList<OtherTypes ...>::Result>::Result;
+        using Result = TypesList_R<Type, typename CreateTypesList<OtherTypes ...>::Result>;
     };
 
     template<class Type>
     struct CreateTypesList<Type> {
         TYPE_INFO("CreateTypesList", "creates arbitrary length list of types");
 
-        using Result = typename TypesList<Type, NullType>::Result;
+        using Result = TypesList_R<Type, NullType>;
     };
 
     template<>
@@ -141,6 +144,9 @@ namespace TL {
 
         using Result = NullType;
     };
+
+    template<class Type, class ... OtherTypes>
+    using CreateTypesList_R = typename CreateTypesList<Type, OtherTypes ...>::Result;
 #pragma endregion
 
 
@@ -175,6 +181,9 @@ namespace TL {
 
         using Result = Head;
     };
+
+    template<class TypesList, uint8_t index>
+    using GetTypeByIndex_R = typename GetTypeByIndex<TypesList, index>::Result;
 #pragma endregion
 
 
@@ -209,6 +218,9 @@ namespace TL {
 
         constexpr static uint8_t Result = 0;
     };
+
+    template<class TypesList, class Type>
+    constexpr uint8_t GetIndexByType_R = GetIndexByType<TypesList, Type>::Result;
 #pragma endregion
 
 
@@ -246,51 +258,91 @@ namespace TL {
 
         constexpr static bool Result = true;
     };
+
+    template<class TypesList, class Type>
+    constexpr bool IsInList_R = IsInList<TypesList, Type>::Result;
 #pragma endregion
 
 
 #pragma region AppendBack
     // SECTION: AppendBack
-    // brief: appends one type or arbitrary length types list inside the target TypesList
-    // Result: new list of types consisting of all types from the target TypesList and additional type(or types)
+    // brief: appends one type or arbitrary length types list at the end of the target TypesList
+    // Result: new list of types consisting of all types from the target TypesList and additional type(or types) from back
     // example 1: TL::AppendBack<TL::CreateTypesList<int8_t>::Result, int16_t>::Result // -> [int8_t, int16_t]
     // example 2: TL::AppendBack<INTs_t, char>::Result // -> [int8_t, int16_t, int32_t, int64_t, char]
     // example 3: TL::AppendBack<INTs_t, UINTs_t>::Result // -> [int8_t, int16_t, int32_t, int64_t, uint8_t, uint16_t, uint32_t, uint64_t]
 
     template<class TypesList_t, class Type>
     struct AppendBack {
-        TYPE_INFO("AppendBack", "appends one type or arbitrary length types list inside the target TypesList: use only with TypesList-struct");
+        TYPE_INFO("AppendBack", "appends one type or arbitrary length types list at the end of the target TypesList: use only with TypesList-struct");
 
         static_assert(std::is_same_v<TypesList_t, TypesList>, "forbidden to apply AppendBack-struct to not TypesList-struct");
     };
 
     template<class Head, class Tail, class Type>
     struct AppendBack<TypesList<Head, Tail>, Type> {
-        TYPE_INFO("AppendBack", "appends one type or arbitrary length types list inside the target TypesList: use only with TypesList-struct");
+        TYPE_INFO("AppendBack", "appends one type or arbitrary length types list at the end of the target TypesList: use only with TypesList-struct");
 
         using Result = TypesList<Head, typename AppendBack<Tail, Type>::Result>;
     };
 
     template<class Head, class Type>
     struct AppendBack<TypesList<Head, NullType>, Type> {
-        TYPE_INFO("AppendBack", "appends one type or arbitrary length types list inside the target TypesList: use only with TypesList-struct");
+        TYPE_INFO("AppendBack", "appends one type or arbitrary length types list at the end of the target TypesList: use only with TypesList-struct");
 
         using Result = TypesList<Head, TypesList<Type, NullType>>;
     };
 
     template<class Head1, class Head2, class Tail2>
     struct AppendBack<TypesList<Head1, NullType>, TypesList<Head2, Tail2>> {
-        TYPE_INFO("AppendBack", "appends one type or arbitrary length types list inside the target TypesList: use only with TypesList-struct");
+        TYPE_INFO("AppendBack", "appends one type or arbitrary length types list at the end of the target TypesList: use only with TypesList-struct");
 
         using Result = typename AppendBack<TypesList<Head1, TypesList<Head2, NullType>>, Tail2>::Result;
     };
 
     template<class Head1, class Head2>
     struct AppendBack<TypesList<Head1, NullType>, TypesList<Head2, NullType>> {
-        TYPE_INFO("AppendBack", "appends one type or arbitrary length types list inside the target TypesList: use only with TypesList-struct");
+        TYPE_INFO("AppendBack", "appends one type or arbitrary length types list at the end of the target TypesList: use only with TypesList-struct");
 
         using Result = TypesList<Head1, TypesList<Head2, NullType>>;
     };
+
+    template<class TypesList, class Type>
+    using AppendBack_R = typename AppendBack<TypesList, Type>::Result;
+#pragma endregion
+
+
+#pragma region AppendFront
+    // SECTION: AppendFront
+    // brief: appends one type or arbitrary length types list at the end of the target TypesList to front
+    // Result: new list of types consisting of all types from the target TypesList and additional type(or types) from front
+    // example 1: TL::AppendFront<TL::CreateTypesList<int8_t>::Result, int16_t>::Result // -> [int16_t, int8_t]
+    // example 2: TL::AppendFront<INTs_t, char>::Result // -> [char, int8_t, int16_t, int32_t, int64_t]
+    // example 3: TL::AppendFront<INTs_t, UINTs_t>::Result // -> [uint8_t, uint16_t, uint32_t, uint64_t, int8_t, int16_t, int32_t, int64_t]
+
+    template<class TypesList_t, class Type>
+    struct AppendFront {
+        TYPE_INFO("AppendFront", "appends one type or arbitrary length types list at the beginning of the target TypesList to front: use only with TypesList-struct");
+
+        static_assert(std::is_same_v<TypesList_t, TypesList>, "forbidden to apply AppendFront-struct to not TypesList-struct");
+    };
+
+    template<class Head, class Tail, class Type>
+    struct AppendFront<TypesList<Head, Tail>, Type> {
+        TYPE_INFO("AppendFront", "appends one type or arbitrary length types list at the beginning of the target TypesList to front: use only with TypesList-struct");
+
+        using Result = AppendBack_R<CreateTypesList_R<Type>, TypesList<Head, Tail>>;
+    };
+
+    template<class Head1, class Tail1, class Head2, class Tail2>
+    struct AppendFront<TypesList<Head1, Tail1>, TypesList<Head2, Tail2>> {
+        TYPE_INFO("AppendFront", "appends one type or arbitrary length types list at the beginning of the target TypesList to front: use only with TypesList-struct");
+
+        using Result = AppendBack_R<TypesList<Head2, Tail2>, TypesList<Head1, Tail1>>;
+    };
+
+    template<class TypesList, class Type>
+    using AppendFront_R = typename AppendFront<TypesList, Type>::Result;
 #pragma endregion
 }
 

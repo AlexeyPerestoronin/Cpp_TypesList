@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 #include <TypesList.hpp>
 
-using UINTs_t = TL::CreateTypesList<uint8_t, uint16_t, uint32_t, uint64_t>::Result;
-using INTs_t = TL::CreateTypesList<int8_t, int16_t, int32_t, int64_t>::Result;
+using UINTs_t = TL::CreateTypesList_R<uint8_t, uint16_t, uint32_t, uint64_t>;
+using INTs_t = TL::CreateTypesList_R<int8_t, int16_t, int32_t, int64_t>;
 
 
 TEST(TypesList, Size) {
@@ -12,110 +12,160 @@ TEST(TypesList, Size) {
 
 
 TEST(TypesList, GetTypeByIndex) {
-    EXPECT_TRUE(bool(std::is_same_v<TL::GetTypeByIndex<UINTs_t, 0>::Result, uint8_t>));
-    EXPECT_TRUE(bool(std::is_same_v<TL::GetTypeByIndex<UINTs_t, 1>::Result, uint16_t>));
-    EXPECT_TRUE(bool(std::is_same_v<TL::GetTypeByIndex<UINTs_t, 2>::Result, uint32_t>));
-    EXPECT_TRUE(bool(std::is_same_v<TL::GetTypeByIndex<UINTs_t, 3>::Result, uint64_t>));
-    //EXPECT_TRUE(bool(std::is_same_v<TL::GetTypeByIndex<UINTs_t, 4>::Result, uint64_t>)); // compilation error
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<UINTs_t, 0>, uint8_t>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<UINTs_t, 1>, uint16_t>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<UINTs_t, 2>, uint32_t>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<UINTs_t, 3>, uint64_t>));
+    //EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<UINTs_t, 4>, uint64_t>)); // compilation error
 
-    EXPECT_FALSE(bool(std::is_same_v<TL::GetTypeByIndex<UINTs_t, 3>::Result, uint8_t>));
-    EXPECT_FALSE(bool(std::is_same_v<TL::GetTypeByIndex<UINTs_t, 2>::Result, uint16_t>));
-    EXPECT_FALSE(bool(std::is_same_v<TL::GetTypeByIndex<UINTs_t, 1>::Result, uint32_t>));
-    EXPECT_FALSE(bool(std::is_same_v<TL::GetTypeByIndex<UINTs_t, 0>::Result, uint64_t>));
-    //EXPECT_FALSE(bool(std::is_same_v<TL::GetTypeByIndex<UINTs_t, 11>::Result, uint64_t>)); // compilation error
+    EXPECT_FALSE((std::is_same_v<TL::GetTypeByIndex_R<UINTs_t, 3>, uint8_t>));
+    EXPECT_FALSE((std::is_same_v<TL::GetTypeByIndex_R<UINTs_t, 2>, uint16_t>));
+    EXPECT_FALSE((std::is_same_v<TL::GetTypeByIndex_R<UINTs_t, 1>, uint32_t>));
+    EXPECT_FALSE((std::is_same_v<TL::GetTypeByIndex_R<UINTs_t, 0>, uint64_t>));
+    //EXPECT_FALSE((std::is_same_v<TL::GetTypeByIndex_R<UINTs_t, 11>, uint64_t>)); // compilation error
 
-    EXPECT_TRUE(bool(std::is_same_v<TL::GetTypeByIndex<INTs_t, 0>::Result, int8_t>));
-    EXPECT_TRUE(bool(std::is_same_v<TL::GetTypeByIndex<INTs_t, 1>::Result, int16_t>));
-    EXPECT_TRUE(bool(std::is_same_v<TL::GetTypeByIndex<INTs_t, 2>::Result, int32_t>));
-    EXPECT_TRUE(bool(std::is_same_v<TL::GetTypeByIndex<INTs_t, 3>::Result, int64_t>));
-    //EXPECT_TRUE(bool(std::is_same_v<TL::GetTypeByIndex<INTs_t, 5>::Result, int64_t>)); // compilation error
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<INTs_t, 0>, int8_t>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<INTs_t, 1>, int16_t>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<INTs_t, 2>, int32_t>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<INTs_t, 3>, int64_t>));
+    //EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<INTs_t, 5>, int64_t>)); // compilation error
 
-    EXPECT_FALSE(bool(std::is_same_v<TL::GetTypeByIndex<INTs_t, 3>::Result, int8_t>));
-    EXPECT_FALSE(bool(std::is_same_v<TL::GetTypeByIndex<INTs_t, 2>::Result, int16_t>));
-    EXPECT_FALSE(bool(std::is_same_v<TL::GetTypeByIndex<INTs_t, 1>::Result, int32_t>));
-    EXPECT_FALSE(bool(std::is_same_v<TL::GetTypeByIndex<INTs_t, 0>::Result, int64_t>));
-    //EXPECT_FALSE(bool(std::is_same_v<TL::GetTypeByIndex<INTs_t, 8>::Result, int64_t>)); // compilation error
+    EXPECT_FALSE((std::is_same_v<TL::GetTypeByIndex_R<INTs_t, 3>, int8_t>));
+    EXPECT_FALSE((std::is_same_v<TL::GetTypeByIndex_R<INTs_t, 2>, int16_t>));
+    EXPECT_FALSE((std::is_same_v<TL::GetTypeByIndex_R<INTs_t, 1>, int32_t>));
+    EXPECT_FALSE((std::is_same_v<TL::GetTypeByIndex_R<INTs_t, 0>, int64_t>));
+    //EXPECT_FALSE((std::is_same_v<TL::GetTypeByIndex_R<INTs_t, 8>, int64_t>)); // compilation error
 }
 
 
 TEST(TypesList, GetIndexByType) {
-    EXPECT_EQ(uint8_t(TL::GetIndexByType<UINTs_t, uint8_t>::Result), 0);
-    EXPECT_EQ(uint8_t(TL::GetIndexByType<UINTs_t, uint16_t>::Result), 1);
-    EXPECT_EQ(uint8_t(TL::GetIndexByType<UINTs_t, uint32_t>::Result), 2);
-    EXPECT_EQ(uint8_t(TL::GetIndexByType<UINTs_t, uint64_t>::Result), 3);
-    //EXPECT_EQ(uint8_t(TL::GetIndexByType<UINTs_t, char>::Result), 3); // compilation error
+    EXPECT_EQ((TL::GetIndexByType_R<UINTs_t, uint8_t>), 0);
+    EXPECT_EQ((TL::GetIndexByType_R<UINTs_t, uint16_t>), 1);
+    EXPECT_EQ((TL::GetIndexByType_R<UINTs_t, uint32_t>), 2);
+    EXPECT_EQ((TL::GetIndexByType_R<UINTs_t, uint64_t>), 3);
+    //EXPECT_EQ((TL::GetIndexByType_R<UINTs_t, char>), 3); // compilation error
 
-    EXPECT_NE(uint8_t(TL::GetIndexByType<UINTs_t, uint8_t>::Result), 3);
-    EXPECT_NE(uint8_t(TL::GetIndexByType<UINTs_t, uint16_t>::Result), 2);
-    EXPECT_NE(uint8_t(TL::GetIndexByType<UINTs_t, uint32_t>::Result), 1);
-    EXPECT_NE(uint8_t(TL::GetIndexByType<UINTs_t, uint64_t>::Result), 0);
-    //EXPECT_NE(uint8_t(TL::GetIndexByType<UINTs_t, bool>::Result), 0); // compilation error
+    EXPECT_NE((TL::GetIndexByType_R<UINTs_t, uint8_t>), 3);
+    EXPECT_NE((TL::GetIndexByType_R<UINTs_t, uint16_t>), 2);
+    EXPECT_NE((TL::GetIndexByType_R<UINTs_t, uint32_t>), 1);
+    EXPECT_NE((TL::GetIndexByType_R<UINTs_t, uint64_t>), 0);
+    //EXPECT_NE((TL::GetIndexByType_R<UINTs_t, bool>), 0); // compilation error
 
-    EXPECT_EQ(uint8_t(TL::GetIndexByType<INTs_t, int8_t>::Result), 0);
-    EXPECT_EQ(uint8_t(TL::GetIndexByType<INTs_t, int16_t>::Result), 1);
-    EXPECT_EQ(uint8_t(TL::GetIndexByType<INTs_t, int32_t>::Result), 2);
-    EXPECT_EQ(uint8_t(TL::GetIndexByType<INTs_t, int64_t>::Result), 3);
-    //EXPECT_EQ(uint8_t(TL::GetIndexByType<INTs_t, double>::Result), 3); // compilation error
+    EXPECT_EQ((TL::GetIndexByType_R<INTs_t, int8_t>), 0);
+    EXPECT_EQ((TL::GetIndexByType_R<INTs_t, int16_t>), 1);
+    EXPECT_EQ((TL::GetIndexByType_R<INTs_t, int32_t>), 2);
+    EXPECT_EQ((TL::GetIndexByType_R<INTs_t, int64_t>), 3);
+    //EXPECT_EQ((TL::GetIndexByType_R<INTs_t, double>), 3); // compilation error
 
-    EXPECT_NE(uint8_t(TL::GetIndexByType<INTs_t, int8_t>::Result), 3);
-    EXPECT_NE(uint8_t(TL::GetIndexByType<INTs_t, int16_t>::Result), 2);
-    EXPECT_NE(uint8_t(TL::GetIndexByType<INTs_t, int32_t>::Result), 1);
-    EXPECT_NE(uint8_t(TL::GetIndexByType<INTs_t, int64_t>::Result), 0);
-    //EXPECT_NE(uint8_t(TL::GetIndexByType<INTs_t, std::string>::Result), 0); // compilation error
+    EXPECT_NE((TL::GetIndexByType_R<INTs_t, int8_t>), 3);
+    EXPECT_NE((TL::GetIndexByType_R<INTs_t, int16_t>), 2);
+    EXPECT_NE((TL::GetIndexByType_R<INTs_t, int32_t>), 1);
+    EXPECT_NE((TL::GetIndexByType_R<INTs_t, int64_t>), 0);
+    //EXPECT_NE((TL::GetIndexByType_R<INTs_t, std::string>), 0); // compilation error
 }
 
 
 TEST(TypesList, IsInList) {
-    EXPECT_TRUE(bool(TL::IsInList<UINTs_t, uint8_t>::Result));
-    EXPECT_TRUE(bool(TL::IsInList<UINTs_t, uint16_t>::Result));
-    EXPECT_TRUE(bool(TL::IsInList<UINTs_t, uint32_t>::Result));
-    EXPECT_TRUE(bool(TL::IsInList<UINTs_t, uint64_t>::Result));
+    EXPECT_TRUE((TL::IsInList_R<UINTs_t, uint8_t>));
+    EXPECT_TRUE((TL::IsInList_R<UINTs_t, uint16_t>));
+    EXPECT_TRUE((TL::IsInList_R<UINTs_t, uint32_t>));
+    EXPECT_TRUE((TL::IsInList_R<UINTs_t, uint64_t>));
 
-    EXPECT_FALSE(bool(TL::IsInList<UINTs_t, int8_t>::Result));
-    EXPECT_FALSE(bool(TL::IsInList<UINTs_t, int16_t>::Result));
-    EXPECT_FALSE(bool(TL::IsInList<UINTs_t, int32_t>::Result));
-    EXPECT_FALSE(bool(TL::IsInList<UINTs_t, int64_t>::Result));
+    EXPECT_FALSE((TL::IsInList_R<UINTs_t, int8_t>));
+    EXPECT_FALSE((TL::IsInList_R<UINTs_t, int16_t>));
+    EXPECT_FALSE((TL::IsInList_R<UINTs_t, int32_t>));
+    EXPECT_FALSE((TL::IsInList_R<UINTs_t, int64_t>));
 }
 
 
 TEST(TypesList, AppendBack) {
-    // using INT8_t_and_INT16_t = TL::AppendBack<int8_t, int16_t>::Result; // compilation error
-    
-    using INT8_t_and_INT16_t = TL::AppendBack<TL::CreateTypesList<int8_t>::Result, int16_t>::Result;
+    // using INT8_t_and_INT16_t = TL::AppendBack_R<int8_t, int16_t>; // compilation error
+
+    using INT8_t_and_INT16_t = TL::AppendBack_R<TL::CreateTypesList<int8_t>::Result, int16_t>;
     EXPECT_EQ(INT8_t_and_INT16_t::size, 2);
-    EXPECT_TRUE(bool(TL::IsInList<INT8_t_and_INT16_t, int8_t>::Result));
-    EXPECT_TRUE(bool(TL::IsInList<INT8_t_and_INT16_t, int16_t>::Result));
-    EXPECT_EQ(uint8_t(TL::GetIndexByType<INT8_t_and_INT16_t, int8_t>::Result), 0);
-    EXPECT_EQ(uint8_t(TL::GetIndexByType<INT8_t_and_INT16_t, int16_t>::Result), 1);
-    EXPECT_TRUE(bool(std::is_same_v<TL::GetTypeByIndex<INT8_t_and_INT16_t, 0>::Result, int8_t>));
-    EXPECT_TRUE(bool(std::is_same_v<TL::GetTypeByIndex<INT8_t_and_INT16_t, 1>::Result, int16_t>));
+    EXPECT_TRUE((TL::IsInList_R<INT8_t_and_INT16_t, int8_t>));
+    EXPECT_TRUE((TL::IsInList_R<INT8_t_and_INT16_t, int16_t>));
+    EXPECT_EQ((TL::GetIndexByType_R<INT8_t_and_INT16_t, int8_t>), 0);
+    EXPECT_EQ((TL::GetIndexByType_R<INT8_t_and_INT16_t, int16_t>), 1);
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<INT8_t_and_INT16_t, 0>, int8_t>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<INT8_t_and_INT16_t, 1>, int16_t>));
 
-    using INTs_with_char_t = TL::AppendBack<INTs_t, char>::Result;
-    EXPECT_TRUE(bool(TL::IsInList<INTs_with_char_t, char>::Result));
+    using INTs_with_char_t = TL::AppendBack_R<INTs_t, char>;
+    EXPECT_TRUE((TL::IsInList_R<INTs_with_char_t, char>));
     EXPECT_EQ(INTs_with_char_t::size, INTs_t::size + 1);
-    EXPECT_EQ(uint8_t(TL::GetIndexByType<INTs_with_char_t, char>::Result), INTs_with_char_t::size - 1);
-    EXPECT_TRUE(bool(std::is_same_v<TL::GetTypeByIndex<INTs_with_char_t, INTs_with_char_t::size - 1>::Result, char>));
+    EXPECT_EQ((TL::GetIndexByType_R<INTs_with_char_t, char>), INTs_with_char_t::size - 1);
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<INTs_with_char_t, INTs_with_char_t::size - 1>, char>));
 
-    using ALL_INTs_t = TL::AppendBack<INTs_t, UINTs_t>::Result;
+    using ALL_INTs_t = TL::AppendBack_R<INTs_t, UINTs_t>;
     EXPECT_EQ(ALL_INTs_t::size, INTs_t::size + UINTs_t::size);
-    EXPECT_EQ(uint8_t(TL::GetIndexByType<ALL_INTs_t, int8_t>::Result), 0);
-    EXPECT_EQ(uint8_t(TL::GetIndexByType<ALL_INTs_t, int16_t>::Result), 1);
-    EXPECT_EQ(uint8_t(TL::GetIndexByType<ALL_INTs_t, int32_t>::Result), 2);
-    EXPECT_EQ(uint8_t(TL::GetIndexByType<ALL_INTs_t, int64_t>::Result), 3);
-    EXPECT_EQ(uint8_t(TL::GetIndexByType<ALL_INTs_t, uint8_t>::Result), 4);
-    EXPECT_EQ(uint8_t(TL::GetIndexByType<ALL_INTs_t, uint16_t>::Result), 5);
-    EXPECT_EQ(uint8_t(TL::GetIndexByType<ALL_INTs_t, uint32_t>::Result), 6);
-    EXPECT_EQ(uint8_t(TL::GetIndexByType<ALL_INTs_t, uint64_t>::Result), 7);
-    //EXPECT_EQ(uint8_t(TL::GetIndexByType<ALL_INTs_t, char>::Result), 8); // compilation error
-    EXPECT_TRUE(bool(std::is_same_v<TL::GetTypeByIndex<ALL_INTs_t, 0>::Result, int8_t>));
-    EXPECT_TRUE(bool(std::is_same_v<TL::GetTypeByIndex<ALL_INTs_t, 1>::Result, int16_t>));
-    EXPECT_TRUE(bool(std::is_same_v<TL::GetTypeByIndex<ALL_INTs_t, 2>::Result, int32_t>));
-    EXPECT_TRUE(bool(std::is_same_v<TL::GetTypeByIndex<ALL_INTs_t, 3>::Result, int64_t>));
-    EXPECT_TRUE(bool(std::is_same_v<TL::GetTypeByIndex<ALL_INTs_t, 4>::Result, uint8_t>));
-    EXPECT_TRUE(bool(std::is_same_v<TL::GetTypeByIndex<ALL_INTs_t, 5>::Result, uint16_t>));
-    EXPECT_TRUE(bool(std::is_same_v<TL::GetTypeByIndex<ALL_INTs_t, 6>::Result, uint32_t>));
-    EXPECT_TRUE(bool(std::is_same_v<TL::GetTypeByIndex<ALL_INTs_t, 7>::Result, uint64_t>));
-    //EXPECT_TRUE(bool(std::is_same_v<TL::GetTypeByIndex<ALL_INTs_t, 8>::Result, char>)); // compilation error
+    EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int8_t>), 0);
+    EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int16_t>), 1);
+    EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int32_t>), 2);
+    EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int64_t>), 3);
+    EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, uint8_t>), 4);
+    EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, uint16_t>), 5);
+    EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, uint32_t>), 6);
+    EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, uint64_t>), 7);
+    //EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, char>), 8); // compilation error
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<ALL_INTs_t, 0>, int8_t>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<ALL_INTs_t, 1>, int16_t>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<ALL_INTs_t, 2>, int32_t>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<ALL_INTs_t, 3>, int64_t>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<ALL_INTs_t, 4>, uint8_t>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<ALL_INTs_t, 5>, uint16_t>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<ALL_INTs_t, 6>, uint32_t>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<ALL_INTs_t, 7>, uint64_t>));
+    //EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<ALL_INTs_t, 8>, char>)); // compilation error
+}
+
+
+TEST(TypesList, AppendFront) {
+    //using INT8_t_and_INT16_t = TL::AppendFront_R<int8_t, int16_t>; // compilation error
+
+    using INT16_t_and_INT8_t = TL::AppendFront_R<TL::CreateTypesList_R<int8_t>, int16_t>;
+    EXPECT_EQ(INT16_t_and_INT8_t::size, 2);
+    EXPECT_TRUE((TL::IsInList_R<INT16_t_and_INT8_t, int16_t>));
+    EXPECT_TRUE((TL::IsInList_R<INT16_t_and_INT8_t, int8_t>));
+    EXPECT_EQ((TL::GetIndexByType_R<INT16_t_and_INT8_t, int16_t>), 0);
+    EXPECT_EQ((TL::GetIndexByType_R<INT16_t_and_INT8_t, int8_t>), 1);
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<INT16_t_and_INT8_t, 0>, int16_t>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<INT16_t_and_INT8_t, 1>, int8_t>));
+
+    using char_with_INTs_t = TL::AppendFront_R<INTs_t, char>;
+    EXPECT_EQ(char_with_INTs_t::size, INTs_t::size + 1);
+    EXPECT_EQ((TL::GetIndexByType_R<char_with_INTs_t, char>), 0);
+    EXPECT_EQ((TL::GetIndexByType_R<char_with_INTs_t, int8_t>), 1);
+    EXPECT_EQ((TL::GetIndexByType_R<char_with_INTs_t, int16_t>), 2);
+    EXPECT_EQ((TL::GetIndexByType_R<char_with_INTs_t, int32_t>), 3);
+    EXPECT_EQ((TL::GetIndexByType_R<char_with_INTs_t, int64_t>), 4);
+    //EXPECT_EQ((TL::GetIndexByType_R<char_with_INTs_t, int>), 0); // compilation error
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<char_with_INTs_t, 0>, char>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<char_with_INTs_t, 1>, int8_t>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<char_with_INTs_t, 2>, int16_t>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<char_with_INTs_t, 3>, int32_t>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<char_with_INTs_t, 4>, int64_t>));
+    //EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<char_with_INTs_t, 5>, int>)); // compilation error
+
+    using ALL_INTs_t = TL::AppendFront_R<INTs_t, UINTs_t>;
+    EXPECT_EQ(ALL_INTs_t::size, INTs_t::size + UINTs_t::size);
+    EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, uint8_t>), 0);
+    EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, uint16_t>), 1);
+    EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, uint32_t>), 2);
+    EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, uint64_t>), 3);
+    EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int8_t>), 4);
+    EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int16_t>), 5);
+    EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int32_t>), 6);
+    EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int64_t>), 7);
+    //EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int>), 8); // compilation error
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<ALL_INTs_t, 0>, uint8_t>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<ALL_INTs_t, 1>, uint16_t>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<ALL_INTs_t, 2>, uint32_t>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<ALL_INTs_t, 3>, uint64_t>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<ALL_INTs_t, 4>, int8_t>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<ALL_INTs_t, 5>, int16_t>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<ALL_INTs_t, 6>, int32_t>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<ALL_INTs_t, 7>, int64_t>));
+    //EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<ALL_INTs_t, 8>, int>)); // compilation error
 }
 
 
