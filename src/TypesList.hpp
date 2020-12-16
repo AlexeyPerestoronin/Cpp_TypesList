@@ -344,6 +344,65 @@ namespace TL {
     template<class TypesList, class Type>
     using AppendFront_R = typename AppendFront<TypesList, Type>::Result;
 #pragma endregion
+
+
+#pragma region InsertByIndex
+    // SECTION: InsertByIndex
+    // brief: insert one type or arbitrary length types list at the target TypesList by index
+    // Result: new list of types consisting of all types from the target TypesList and additional type(or types) inserted by index
+    // example 1: TL::InsertByIndex_R<TL::CreateTypesList_R<int8_t>, int16_t, 0> // -> [int16_t, int8_t]
+    // example 2: TL::InsertByIndex_R<TL::CreateTypesList_R<int8_t>, int16_t, 0> // -> [int8_t, int16_t]
+    // example 3: TL::InsertByIndex_R<INTs_t, UINTs_t, 0>::Result // -> [uint8_t, uint16_t, uint32_t, uint64_t, int8_t, int16_t, int32_t, int64_t]
+    // example 3: TL::InsertByIndex_R<INTs_t, UINTs_t, 1>::Result // -> [int8_t, uint8_t, uint16_t, uint32_t, uint64_t, int16_t, int32_t, int64_t]
+    // example 3: TL::InsertByIndex_R<INTs_t, UINTs_t, 2>::Result // -> [int8_t, int16_t, uint8_t, uint16_t, uint32_t, uint64_t, int32_t, int64_t]
+    // example 3: TL::InsertByIndex_R<INTs_t, UINTs_t, 3>::Result // -> [int8_t, int16_t, int32_t, uint8_t, uint16_t, uint32_t, uint64_t, int64_t]
+    // example 3: TL::InsertByIndex_R<INTs_t, UINTs_t, 4>::Result // -> [int8_t, int16_t, int32_t, int64_t, uint8_t, uint16_t, uint32_t, uint64_t]
+
+    template<class TypesList_t, class Type, uint8_t index>
+    struct InsertByIndex {
+        TYPE_INFO("InsertByIndex", "insert one type or arbitrary length types list at the target TypesList by index: use only with TypesList-struct");
+
+        static_assert(std::is_same_v<TypesList_t, TypesList>, "forbidden to apply AppendFront-struct to not InsertByIndex-struct");
+    };
+
+    template<class Type, uint8_t index>
+    struct InsertByIndex<NullType, Type, index> {
+        TYPE_INFO("InsertByIndex", "insert one type or arbitrary length types list at the target TypesList by index: use only with TypesList-struct");
+
+        static_assert(index == 0, "index out of range for target TypesList");
+    };
+
+    template<class Head, class Tail, class Type, uint8_t index>
+    struct InsertByIndex<TypesList<Head, Tail>, Type, index> {
+        TYPE_INFO("InsertByIndex", "insert one type or arbitrary length types list at the target TypesList by index: use only with TypesList-struct");
+
+        using Result = TypesList<Head, typename InsertByIndex<Tail, Type, index - 1>::Result>;
+    };
+
+    template<class Head, class Tail, class Type>
+    struct InsertByIndex<TypesList<Head, Tail>, Type, 0> {
+        TYPE_INFO("InsertByIndex", "insert one type or arbitrary length types list at the target TypesList by index: use only with TypesList-struct");
+
+        using Result = AppendFront_R<TypesList<Head, Tail>, Type>;
+    };
+
+    template<class Head, class Tail>
+    struct InsertByIndex<NullType, TypesList<Head, Tail>, 0> {
+        TYPE_INFO("InsertByIndex", "insert one type or arbitrary length types list at the target TypesList by index: use only with TypesList-struct");
+
+        using Result = TypesList<Head, Tail>;
+    };
+
+    template<class Type>
+    struct InsertByIndex<NullType, Type, 0> {
+        TYPE_INFO("InsertByIndex", "insert one type or arbitrary length types list at the target TypesList by index: use only with TypesList-struct");
+
+        using Result = TypesList<Type, NullType>;
+    };
+
+    template<class TypesList, class Type, uint8_t index>
+    using InsertByIndex_R = typename InsertByIndex<TypesList, Type, index>::Result;
+#pragma endregion
 }
 
 #endif // __TYPES_LIST__
