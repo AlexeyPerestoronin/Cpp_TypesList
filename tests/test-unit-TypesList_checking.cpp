@@ -289,6 +289,32 @@ TEST(TypesList, InsertByIndex) {
 }
 
 
+TEST(TypesList, RemoveBack) {
+    using NOT_ALL_INTs_3_t = TL::RemoveBack_R<INTs_t>;
+    EXPECT_EQ(NOT_ALL_INTs_3_t::size, INTs_t::size - 1);
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_3_t, 0>, TL::GetTypeByIndex_R<INTs_t, 0>>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_3_t, 1>, TL::GetTypeByIndex_R<INTs_t, 1>>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_3_t, 2>, TL::GetTypeByIndex_R<INTs_t, 2>>));
+    //EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_3_t, 3>, TL::GetTypeByIndex_R<INTs_t, 3>>)); // compilation error
+
+    using NOT_ALL_INTs_2_t = TL::RemoveBack_R<NOT_ALL_INTs_3_t>;
+    EXPECT_EQ(NOT_ALL_INTs_2_t::size, NOT_ALL_INTs_3_t::size - 1);
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_2_t, 0>, TL::GetTypeByIndex_R<INTs_t, 0>>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_2_t, 1>, TL::GetTypeByIndex_R<INTs_t, 1>>));
+    //EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_2_t, 2>, TL::GetTypeByIndex_R<INTs_t, 2>>)); // compilation error
+
+    using NOT_ALL_INTs_1_t = TL::RemoveBack_R<NOT_ALL_INTs_2_t>;
+    EXPECT_EQ(NOT_ALL_INTs_1_t::size, NOT_ALL_INTs_2_t::size - 1);
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_1_t, 0>, TL::GetTypeByIndex_R<INTs_t, 0>>));
+    //EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_1_t, 1>, TL::GetTypeByIndex_R<INTs_t, 1>>)); // compilation error
+
+    EXPECT_TRUE((std::is_same_v<TL::RemoveBack_R<NOT_ALL_INTs_1_t>, TL::NullType>));
+
+    //using ERROR_1_t = TL::RemoveBack_R<TL::NullType>; // compilation error
+    //using ERROR_2_t = TL::RemoveBack_R<int>; // compilation error
+}
+
+
 int main(int argc, char *argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

@@ -361,8 +361,6 @@ namespace TL {
     template<class TypesList_t, class Type, uint8_t index>
     struct InsertByIndex {
         TYPE_INFO("InsertByIndex", "insert one type or arbitrary length types list at the target TypesList by index: use only with TypesList-struct");
-
-        static_assert(std::is_same_v<TypesList_t, TypesList>, "forbidden to apply AppendFront-struct to not InsertByIndex-struct");
     };
 
     template<class Type, uint8_t index>
@@ -402,6 +400,41 @@ namespace TL {
 
     template<class TypesList, class Type, uint8_t index>
     using InsertByIndex_R = typename InsertByIndex<TypesList, Type, index>::Result;
+#pragma endregion
+
+
+#pragma region RemoveBack
+    // SECTION: RemoveBack
+    // brief: remove last type from target TypesList
+    // example 1: RemoveBack_R<INTs_t> // --> [int8_t, int16_t, int32_t]
+    // example 2: RemoveBack_R<RemoveBack_R<INTs_t>> // --> [int8_t, int16_t]
+    // example 3: RemoveBack_R<RemoveBack_R<RemoveBack_R<INTs_t>>> // --> [int8_t]
+    // example 4: RemoveBack_R<RemoveBack_R<RemoveBack_R<RemoveBack_R<INTs_t>>>> // --> []
+    // example 5: RemoveBack_R<RemoveBack_R<RemoveBack_R<RemoveBack_R<RemoveBack_R<INTs_t>>>>> // --> compilation error
+
+    template<class TypesList_t>
+    struct RemoveBack {
+        TYPE_INFO("RemoveBack", "remove last type from target TypesList: use only with TypesList-struct");
+
+        static_assert(!std::is_same_v<TypesList_t, NullType>, "forbidden to apply RemoveBack-struct to NullType-struct");
+    };
+
+    template<class Head, class Tail>
+    struct RemoveBack<TypesList<Head, Tail>> {
+        TYPE_INFO("RemoveBack", "remove last type from target TypesList: use only with TypesList-struct");
+
+        using Result = TypesList<Head, typename RemoveBack<Tail>::Result>;
+    };
+
+    template<class Head>
+    struct RemoveBack<TypesList<Head, NullType>> {
+        TYPE_INFO("RemoveBack", "remove last type from target TypesList: use only with TypesList-struct");
+
+        using Result = NullType;
+    };
+
+    template<class TypesList_t>
+    using RemoveBack_R = typename RemoveBack<TypesList_t>::Result;
 #pragma endregion
 }
 
