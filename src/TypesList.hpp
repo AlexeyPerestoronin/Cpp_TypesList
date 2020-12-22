@@ -42,6 +42,24 @@ namespace TL {
     // NOTE: need determine TypeInfo instance for C++ common types below
 
     template<>
+    struct TypeInfo<float> {
+        constexpr static const char* name = "float";
+        constexpr static const char* description = "standart type float";
+    };
+
+    template<>
+    struct TypeInfo<double> {
+        constexpr static const char* name = "double";
+        constexpr static const char* description = "standart type double";
+    };
+
+    template<>
+    struct TypeInfo<bool> {
+        constexpr static const char* name = "bool";
+        constexpr static const char* description = "standart type bool";
+    };
+
+    template<>
     struct TypeInfo<uint8_t> {
         constexpr static const char* name = "uint8_t";
         constexpr static const char* description = "8-bit size unsigned integer STL-type";
@@ -189,7 +207,7 @@ namespace TL {
     template<uint8_t index>
     struct GetTypeByIndex<NullType, index> {
         EXPLICIT_TYPE_INFO
-        static_assert(AlwaysFalse_R<index>, "index out of range");
+        static_assert(AlwaysFalse_R<NullType, index>, "index out of range");
     };
 
     template<class Head, class Tail, uint8_t index>
@@ -405,7 +423,7 @@ namespace TL {
     template<class Type, uint8_t index>
     struct InsertByIndex<NullType, Type, index> {
         EXPLICIT_TYPE_INFO
-        static_assert(AlwaysFalse_R<index>, "forbidden to use InsertByIndex with not TypesList-struct");
+        static_assert(AlwaysFalse_R<NullType, index>, "forbidden to use InsertByIndex with not TypesList-struct");
     };
 
     template<class Head, class Tail, class Type, uint8_t index>
@@ -524,7 +542,7 @@ namespace TL {
     template<uint8_t index>
     struct RemoveByIndex<NullType, index> {
         EXPLICIT_TYPE_INFO
-        static_assert(AlwaysFalse_R<index>, "index of TypesList out of range");
+        static_assert(AlwaysFalse_R<NullType, index>, "index of TypesList out of range");
     };
 
     template<class Head, class Tail, uint8_t index>
@@ -671,6 +689,58 @@ namespace TL {
 #pragma endregion
 
 
+#pragma region Count
+    // SECTION Count
+    // brief: counts the quantity of entries of the Type in target TypesList
+    // note 1: using RANDOM_TYPE1s_t = TL::CreateTypesList_R<int, int, int, int>;
+    // note 2: using RANDOM_TYPE2s_t = TL::CreateTypesList_R<int, int, bool, bool, char, char, float, float>;
+    // note 3: using RANDOM_TYPE3s_t = TL::CreateTypesList_R<int, bool, char, float, int, bool, char, float>;
+    // note 4: using RANDOM_TYPE4s_t = TL::CreateTypesList_R<int, int, int, char, char, bool, bool, int, float, bool>;
+    // example 1: TL::Count_R<RANDOM_TYPE1s_t, int>; // --> 4
+    // example 1: TL::Count_R<RANDOM_TYPE2s_t, int>; // --> 2
+    // example 1: TL::Count_R<RANDOM_TYPE3s_t, int>; // --> 2
+    // example 1: TL::Count_R<RANDOM_TYPE4s_t, int>; // --> 4
+
+#define EXPLICIT_TYPE_INFO TYPE_INFO("Count", "counts the quantity of entries of the Type in target TypesList");
+
+    template<class TypesList_t, class Type>
+    struct Count {
+        EXPLICIT_TYPE_INFO
+        static_assert(AlwaysFalse_R<TypesList_t>, "forbidden to use Count with not TypesList-struct");
+    };
+
+    template<class Head, class Tail, class Type>
+    struct Count<TypesList<Head, Tail>, Type> {
+        EXPLICIT_TYPE_INFO
+        constexpr static uint8_t Result = Count<Tail, Type>::Result;
+    };
+
+    template<class Head, class Tail>
+    struct Count<TypesList<Head, Tail>, Head> {
+        EXPLICIT_TYPE_INFO
+        constexpr static uint8_t Result = 1 + Count<Tail, Head>::Result;
+    };
+
+    template<class Head, class Type>
+    struct Count<TypesList<Head, NullType>, Type> {
+        EXPLICIT_TYPE_INFO
+        constexpr static uint8_t Result = 0;
+    };
+
+    template<class Head>
+    struct Count<TypesList<Head, NullType>, Head> {
+        EXPLICIT_TYPE_INFO
+        constexpr static uint8_t Result = 1;
+    };
+
+#undef EXPLICIT_TYPE_INFO
+
+    template<class TypesList_t, class Type>
+    constexpr uint8_t Count_R = Count<TypesList_t, Type>::Result;
+
+#pragma endregion
+
+
 #pragma region Remove
     // SECTION: Remove
 
@@ -679,26 +749,32 @@ namespace TL {
     template<class TypesList_t, class Type, uint8_t quantity>
     struct Remove {
         EXPLICIT_TYPE_INFO
-        static_assert(AlwaysFalse_R<TypesList_t>, "forbidden to use CutFromSize with not TypesList-struct");
+        static_assert(AlwaysFalse_R<TypesList_t>, "forbidden to use Remove with not TypesList-struct");
     };
 
     template<class Head, class Tail, class Type, uint8_t quantity>
     struct Remove<TypesList<Head, Tail>, Type, quantity> {
         EXPLICIT_TYPE_INFO
         using Result = TypesList<Head, typename Remove<Tail, Type, quantity>::Result>;
-    }
+    };
 
     template<class Head, class Tail, uint8_t quantity>
     struct Remove<TypesList<Head, Tail>, Head, quantity> {
         EXPLICIT_TYPE_INFO
-        using Result = TypesList<Head, typename Remove<Tail, Type, quantity - 1>::Result>;
-    }
+        using Result = TypesList<Head, typename Remove<Tail, Head, quantity - 1>::Result>;
+    };
 
     template<class Head, class Tail>
     struct Remove<TypesList<Head, Tail>, Head, 0> {
         EXPLICIT_TYPE_INFO
-        using Result = typename Remove<Tail, Type, 0>::Result;
-    }
+        using Result = typename Remove<Tail, Head, 0>::Result;
+    };
+
+    template<class Type, uint8_t quantity>
+    struct Remove<NullType, Type, quantity> {
+        EXPLICIT_TYPE_INFO
+        using Result = NullType;
+    };
 
 #undef EXPLICIT_TYPE_INFO
 

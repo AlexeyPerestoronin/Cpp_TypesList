@@ -18,6 +18,7 @@ It is a library provided structs and type-constructor-struct for manipulation of
     * [x] struct: RemoveByIndex - removes type from target TypesList by index
     * [x] struct: RemoveFromSize - removes the types since from-index to from+size-index from target TypesList
     * [x] struct: CutFromSize - cuts out the types since from-index to from+size-index from target TypesList
+    * [x] struct: Count - counts the quantity of entries of the Type in target TypesList
     * [ ] struct: Remove
     * [ ] struct: RemoveAll
     * [ ] struct: RemoveAllCopy
@@ -29,3 +30,4 @@ It is a library provided structs and type-constructor-struct for manipulation of
 * [ ] by using of `cs_string`-type need implement extended `TypeInfo`-struct for `TypesList`-struct which will defined the `name` and `description` fields as (for example):
     - `uint8_t + uint16_t + uint32_t + uint64_t`
     - `8-bit size unsigned integer STL-type + 16-bit size unsigned integer STL-type + 32-bit size unsigned integer STL-type + 641-bit size unsigned integer STL-type`
+* [ ] make substitute (1) `#define TL_TYPE uint8_t` and (2) `#define TL_TYPE_MAX UINT8_MAX` and use them

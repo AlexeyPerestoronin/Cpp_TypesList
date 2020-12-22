@@ -771,7 +771,48 @@ TEST(TypesList, RemoveFromSize) {
 }
 
 
+using RANDOM_TYPE1s_t = TL::CreateTypesList_R<int, int, int, int>;
+using RANDOM_TYPE2s_t = TL::CreateTypesList_R<int, int, bool, bool, char, char, float, float>;
+using RANDOM_TYPE3s_t = TL::CreateTypesList_R<int, bool, char, float, int, bool, char, float>;
+using RANDOM_TYPE4s_t = TL::CreateTypesList_R<int, int, int, char, char, bool, bool, int, float, bool>;
+
+
+TEST(TypesList, Count) {
+    //constexpr uint8_t count_2 = TL::Count_R<int, int>; // compilation error
+    //constexpr uint8_t count_2 = TL::Count_R<TL::NullType, int>; // compilation error
+    //constexpr uint8_t count_2 = TL::Count_R<TL::NullType, TL::NullType>; // compilation error
+
+    EXPECT_EQ((TL::Count_R<RANDOM_TYPE1s_t, int>), 4);
+    EXPECT_EQ((TL::Count_R<RANDOM_TYPE2s_t, int>), 2);
+    EXPECT_EQ((TL::Count_R<RANDOM_TYPE3s_t, int>), 2);
+    EXPECT_EQ((TL::Count_R<RANDOM_TYPE4s_t, int>), 4);
+
+    EXPECT_EQ((TL::Count_R<RANDOM_TYPE1s_t, bool>), 0);
+    EXPECT_EQ((TL::Count_R<RANDOM_TYPE2s_t, bool>), 2);
+    EXPECT_EQ((TL::Count_R<RANDOM_TYPE3s_t, bool>), 2);
+    EXPECT_EQ((TL::Count_R<RANDOM_TYPE4s_t, bool>), 3);
+
+    EXPECT_EQ((TL::Count_R<RANDOM_TYPE1s_t, char>), 0);
+    EXPECT_EQ((TL::Count_R<RANDOM_TYPE2s_t, char>), 2);
+    EXPECT_EQ((TL::Count_R<RANDOM_TYPE3s_t, char>), 2);
+    EXPECT_EQ((TL::Count_R<RANDOM_TYPE4s_t, char>), 2);
+
+    EXPECT_EQ((TL::Count_R<RANDOM_TYPE1s_t, float>), 0);
+    EXPECT_EQ((TL::Count_R<RANDOM_TYPE2s_t, float>), 2);
+    EXPECT_EQ((TL::Count_R<RANDOM_TYPE3s_t, float>), 2);
+    EXPECT_EQ((TL::Count_R<RANDOM_TYPE4s_t, float>), 1);
+}
+
+
 TEST(TypesList, Remove) {
+    {
+        using R_TYPE_t = int;
+        constexpr uint8_t quantity = 1;
+        using R_TESTs_t = TL::Remove_R<RANDOM_TYPE1s_t, R_TYPE_t, quantity>;
+        EXPECT_EQ(R_TESTs_t::size, (RANDOM_TYPE1s_t::size - TL::Count_R<RANDOM_TYPE1s_t, R_TYPE_t> + quantity));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<R_TESTs_t, 0>, int>));
+        //EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<R_TESTs_t, 1>, int>)); // compilation error
+    }
 }
 
 
