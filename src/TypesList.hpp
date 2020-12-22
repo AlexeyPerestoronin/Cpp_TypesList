@@ -10,6 +10,24 @@ constexpr static const char* DescriptionOfType = description_value;
 
 // TL - Types Lists
 namespace TL {
+#pragma region Always(True|False)
+    // SECTION: Always(True|False)
+    // brief: returns boolean (true/false) regardless of type
+    // example 1: static_assert(AlwaysFalse_R<TypesList_t>, "message that will be printing always but target compiling expression must be compiled");
+
+    template<class ArbitraryType, uint8_t arbitrary_index = 0>
+    struct AlwaysTrue {
+        constexpr static bool Result = std::is_trivial_v<ArbitraryType> || arbitrary_index || true;
+    };
+
+    template<class ArbitraryType = bool, uint8_t arbitrary_index = 0>
+    constexpr bool AlwaysTrue_R = AlwaysTrue<ArbitraryType>::Result;
+
+    template<class ArbitraryType = bool, uint8_t arbitrary_index = 0>
+    constexpr bool AlwaysFalse_R = !AlwaysTrue_R<ArbitraryType>;
+#pragma endregion
+
+
 #pragma region TypeInfo
     // SECTION: TypeInfo
     // brief: if Type is compatibility - provides information about type; compilation error - vise versa
@@ -124,27 +142,27 @@ namespace TL {
     // example 1: using UINTs_t = TL::CreateTypesList<uint8_t, uint16_t, uint32_t, uint64_t>::Result;
     // example 2: using INTs_t = TL::CreateTypesList<int8_t, int16_t, int32_t, int64_t>::Result;
 
+#define EXPLICIT_TYPE_INFO TYPE_INFO("CreateTypesList", "creates arbitrary length list of types");
+
     template<class Type, class ... OtherTypes>
     struct CreateTypesList {
-        TYPE_INFO("CreateTypesList", "creates arbitrary length list of types");
-
+        EXPLICIT_TYPE_INFO
         using Result = TypesList_R<Type, typename CreateTypesList<OtherTypes ...>::Result>;
     };
 
     template<class Type>
     struct CreateTypesList<Type> {
-        TYPE_INFO("CreateTypesList", "creates arbitrary length list of types");
-
+        EXPLICIT_TYPE_INFO
         using Result = TypesList_R<Type, NullType>;
     };
 
     template<>
     struct CreateTypesList<NullType> {
-        TYPE_INFO("CreateTypesList", "creates arbitrary length list of types");
-
+        EXPLICIT_TYPE_INFO
         using Result = NullType;
     };
 
+#undef EXPLICIT_TYPE_INFO
     template<class Type, class ... OtherTypes>
     using CreateTypesList_R = typename CreateTypesList<Type, OtherTypes ...>::Result;
 #pragma endregion
@@ -160,27 +178,33 @@ namespace TL {
     // example 4: GetTypeByIndex<UINTs_t, 3>::Result; // -> uint64_t
     // example 6: GetTypeByIndex<UINTs_t, 4>::Result; // compilation error
 
-    template<class TypesList, uint8_t index>
-    struct GetTypeByIndex {
-        TYPE_INFO("GetTypeByIndex", "get Type from TypesList by index: use only with TypesList-struct");
+#define EXPLICIT_TYPE_INFO TYPE_INFO("GetTypeByIndex", "get Type from TypesList by index: use only with TypesList-struct");
 
-        static_assert(!std::is_same_v<NullType, TypesList>, "index of TypesList out of range");
-        using Result = NullType;
+    template<class TypesList_t, uint8_t index>
+    struct GetTypeByIndex {
+        EXPLICIT_TYPE_INFO
+        static_assert(AlwaysFalse_R<TypesList_t>, "forbidden to use GetTypeByIndex with not TypesList-struct");
+    };
+
+    template<uint8_t index>
+    struct GetTypeByIndex<NullType, index> {
+        EXPLICIT_TYPE_INFO
+        static_assert(AlwaysFalse_R<index>, "index out of range");
     };
 
     template<class Head, class Tail, uint8_t index>
     struct GetTypeByIndex<TypesList<Head, Tail>, index> {
-        TYPE_INFO("GetTypeByIndex", "get Type from TypesList by index: use only with TypesList-struct");
-
+        EXPLICIT_TYPE_INFO
         using Result = typename GetTypeByIndex<Tail, index - 1>::Result;
     };
 
     template<class Head, class Tail>
     struct GetTypeByIndex<TypesList<Head, Tail>, 0> {
-        TYPE_INFO("GetTypeByIndex", "get Type from TypesList by index: use only with TypesList-struct");
-
+        EXPLICIT_TYPE_INFO
         using Result = Head;
     };
+
+#undef EXPLICIT_TYPE_INFO
 
     template<class TypesList, uint8_t index>
     using GetTypeByIndex_R = typename GetTypeByIndex<TypesList, index>::Result;
@@ -197,27 +221,33 @@ namespace TL {
     // example 4: TL::GetIndexByType<UINTs_t, uint64_t>::Result // -> 3
     // example 5: TL::GetIndexByType<UINTs_t, int8_t>::Result // compilation error
 
-    template<class TypesList, class Type>
-    struct GetIndexByType {
-        TYPE_INFO("GetIndexByType", "get index inside TypesList by which target Type is placed: use only with TypesList-struct");
+#define EXPLICIT_TYPE_INFO TYPE_INFO("GetIndexByType", "get index inside TypesList by which target Type is placed: use only with TypesList-struct");
 
-        static_assert(!std::is_same_v<NullType, TypesList>, "Type is not existant inside TypesList");
-        constexpr static uint8_t Result = 1;
+    template<class TypesList_t, class Type>
+    struct GetIndexByType {
+        EXPLICIT_TYPE_INFO
+        static_assert(AlwaysFalse_R<TypesList_t>, "forbidden to use GetIndexByType with not TypesList-struct");
+    };
+
+    template<class Type>
+    struct GetIndexByType<NullType, Type> {
+        EXPLICIT_TYPE_INFO
+        static_assert(AlwaysFalse_R<Type>, "target type is not existant inside TypesList");
     };
 
     template<class Head, class Tail, class Type>
     struct GetIndexByType<TypesList<Head, Tail>, Type> {
-        TYPE_INFO("GetIndexByType", "get index inside TypesList by which target Type is placed: use only with TypesList-struct");
-
+        EXPLICIT_TYPE_INFO
         constexpr static uint8_t Result = 1 + GetIndexByType<Tail, Type>::Result;
     };
 
     template<class Head, class Tail>
     struct GetIndexByType<TypesList<Head, Tail>, Head> {
-        TYPE_INFO("GetIndexByType", "get index inside TypesList by which target Type is placed: use only with TypesList-struct");
-
+        EXPLICIT_TYPE_INFO
         constexpr static uint8_t Result = 0;
     };
+
+#undef EXPLICIT_TYPE_INFO
 
     template<class TypesList, class Type>
     constexpr uint8_t GetIndexByType_R = GetIndexByType<TypesList, Type>::Result;
@@ -237,27 +267,33 @@ namespace TL {
     // example 7: TL::IsInList<UINTs_t, uint64_t>::Result // -> true
     // example 8: TL::IsInList<UINTs_t, int64_t>::Result // -> false
 
-    template<class TypesList, class Type>
-    struct IsInList {
-        TYPE_INFO("IsInList", "check if Type is in TypesList: use only with TypesList-struct");
+#define EXPLICIT_TYPE_INFO TYPE_INFO("IsInList", "check if Type is in TypesList: use only with TypesList-struct");
 
-        static_assert(std::is_same_v<NullType, TypesList>, "use IsInList only with TypesList-struct");
+    template<class TypesList_t, class Type>
+    struct IsInList {
+        EXPLICIT_TYPE_INFO
+        static_assert(AlwaysFalse_R<TypesList_t>, "forbidden to use IsInList with not TypesList-struct");
+    };
+
+    template<class Type>
+    struct IsInList<NullType, Type> {
+        EXPLICIT_TYPE_INFO
         constexpr static bool Result = false;
     };
 
     template<class Head, class Tail, class Type>
     struct IsInList<TypesList<Head, Tail>, Type> {
-        TYPE_INFO("IsInList", "check if Type is in TypesList: use only with TypesList-struct");
-
+        EXPLICIT_TYPE_INFO
         constexpr static bool Result = IsInList<Tail, Type>::Result;
     };
 
     template<class Head, class Tail>
     struct IsInList<TypesList<Head, Tail>, Head> {
-        TYPE_INFO("IsInList", "check if Type is in TypesList: use only with TypesList-struct");
-
+        EXPLICIT_TYPE_INFO
         constexpr static bool Result = true;
     };
+
+#undef EXPLICIT_TYPE_INFO
 
     template<class TypesList, class Type>
     constexpr bool IsInList_R = IsInList<TypesList, Type>::Result;
@@ -272,40 +308,39 @@ namespace TL {
     // example 2: TL::AppendBack<INTs_t, char>::Result // -> [int8_t, int16_t, int32_t, int64_t, char]
     // example 3: TL::AppendBack<INTs_t, UINTs_t>::Result // -> [int8_t, int16_t, int32_t, int64_t, uint8_t, uint16_t, uint32_t, uint64_t]
 
+#define EXPLICIT_TYPE_INFO TYPE_INFO("AppendBack", "appends one type or arbitrary length types list at the end of the target TypesList: use only with TypesList-struct");
+
     template<class TypesList_t, class Type>
     struct AppendBack {
-        TYPE_INFO("AppendBack", "appends one type or arbitrary length types list at the end of the target TypesList: use only with TypesList-struct");
-
-        static_assert(std::is_same_v<TypesList_t, TypesList>, "forbidden to apply AppendBack-struct to not TypesList-struct");
+        EXPLICIT_TYPE_INFO
+        static_assert(AlwaysFalse_R<TypesList_t>, "forbidden to use AppendBack with not TypesList-struct");
     };
 
     template<class Head, class Tail, class Type>
     struct AppendBack<TypesList<Head, Tail>, Type> {
-        TYPE_INFO("AppendBack", "appends one type or arbitrary length types list at the end of the target TypesList: use only with TypesList-struct");
-
+        EXPLICIT_TYPE_INFO
         using Result = TypesList<Head, typename AppendBack<Tail, Type>::Result>;
     };
 
     template<class Head, class Type>
     struct AppendBack<TypesList<Head, NullType>, Type> {
-        TYPE_INFO("AppendBack", "appends one type or arbitrary length types list at the end of the target TypesList: use only with TypesList-struct");
-
+        EXPLICIT_TYPE_INFO
         using Result = TypesList<Head, TypesList<Type, NullType>>;
     };
 
     template<class Head1, class Head2, class Tail2>
     struct AppendBack<TypesList<Head1, NullType>, TypesList<Head2, Tail2>> {
-        TYPE_INFO("AppendBack", "appends one type or arbitrary length types list at the end of the target TypesList: use only with TypesList-struct");
-
+        EXPLICIT_TYPE_INFO
         using Result = typename AppendBack<TypesList<Head1, TypesList<Head2, NullType>>, Tail2>::Result;
     };
 
     template<class Head1, class Head2>
     struct AppendBack<TypesList<Head1, NullType>, TypesList<Head2, NullType>> {
-        TYPE_INFO("AppendBack", "appends one type or arbitrary length types list at the end of the target TypesList: use only with TypesList-struct");
-
+        EXPLICIT_TYPE_INFO
         using Result = TypesList<Head1, TypesList<Head2, NullType>>;
     };
+
+#undef EXPLICIT_TYPE_INFO
 
     template<class TypesList, class Type>
     using AppendBack_R = typename AppendBack<TypesList, Type>::Result;
@@ -320,26 +355,27 @@ namespace TL {
     // example 2: TL::AppendFront<INTs_t, char>::Result // -> [char, int8_t, int16_t, int32_t, int64_t]
     // example 3: TL::AppendFront<INTs_t, UINTs_t>::Result // -> [uint8_t, uint16_t, uint32_t, uint64_t, int8_t, int16_t, int32_t, int64_t]
 
+#define EXPLICIT_TYPE_INFO TYPE_INFO("AppendFront", "appends one type or arbitrary length types list at the beginning of the target TypesList to front: use only with TypesList-struct");
+
     template<class TypesList_t, class Type>
     struct AppendFront {
-        TYPE_INFO("AppendFront", "appends one type or arbitrary length types list at the beginning of the target TypesList to front: use only with TypesList-struct");
-
-        static_assert(std::is_same_v<TypesList_t, TypesList>, "forbidden to apply AppendFront-struct to not TypesList-struct");
+        EXPLICIT_TYPE_INFO
+        static_assert(AlwaysFalse_R<TypesList_t>, "forbidden to use AppendFront with not TypesList-struct");
     };
 
     template<class Head, class Tail, class Type>
     struct AppendFront<TypesList<Head, Tail>, Type> {
-        TYPE_INFO("AppendFront", "appends one type or arbitrary length types list at the beginning of the target TypesList to front: use only with TypesList-struct");
-
+        EXPLICIT_TYPE_INFO
         using Result = AppendBack_R<CreateTypesList_R<Type>, TypesList<Head, Tail>>;
     };
 
     template<class Head1, class Tail1, class Head2, class Tail2>
     struct AppendFront<TypesList<Head1, Tail1>, TypesList<Head2, Tail2>> {
-        TYPE_INFO("AppendFront", "appends one type or arbitrary length types list at the beginning of the target TypesList to front: use only with TypesList-struct");
-
+        EXPLICIT_TYPE_INFO
         using Result = AppendBack_R<TypesList<Head2, Tail2>, TypesList<Head1, Tail1>>;
     };
+
+#undef EXPLICIT_TYPE_INFO
 
     template<class TypesList, class Type>
     using AppendFront_R = typename AppendFront<TypesList, Type>::Result;
@@ -358,45 +394,45 @@ namespace TL {
     // example 3: TL::InsertByIndex_R<INTs_t, UINTs_t, 3>::Result // -> [int8_t, int16_t, int32_t, uint8_t, uint16_t, uint32_t, uint64_t, int64_t]
     // example 3: TL::InsertByIndex_R<INTs_t, UINTs_t, 4>::Result // -> [int8_t, int16_t, int32_t, int64_t, uint8_t, uint16_t, uint32_t, uint64_t]
 
+#define EXPLICIT_TYPE_INFO TYPE_INFO("InsertByIndex", "insert one type or arbitrary length types list at the target TypesList by index: use only with TypesList-struct");
+
     template<class TypesList_t, class Type, uint8_t index>
     struct InsertByIndex {
-        TYPE_INFO("InsertByIndex", "insert one type or arbitrary length types list at the target TypesList by index: use only with TypesList-struct");
+        EXPLICIT_TYPE_INFO
+        static_assert(AlwaysFalse_R<TypesList_t>, "forbidden to use InsertByIndex with not TypesList-struct");
     };
 
     template<class Type, uint8_t index>
     struct InsertByIndex<NullType, Type, index> {
-        TYPE_INFO("InsertByIndex", "insert one type or arbitrary length types list at the target TypesList by index: use only with TypesList-struct");
-
-        static_assert(index == 0, "index out of range for target TypesList");
+        EXPLICIT_TYPE_INFO
+        static_assert(AlwaysFalse_R<index>, "forbidden to use InsertByIndex with not TypesList-struct");
     };
 
     template<class Head, class Tail, class Type, uint8_t index>
     struct InsertByIndex<TypesList<Head, Tail>, Type, index> {
-        TYPE_INFO("InsertByIndex", "insert one type or arbitrary length types list at the target TypesList by index: use only with TypesList-struct");
-
+        EXPLICIT_TYPE_INFO
         using Result = TypesList<Head, typename InsertByIndex<Tail, Type, index - 1>::Result>;
     };
 
     template<class Head, class Tail, class Type>
     struct InsertByIndex<TypesList<Head, Tail>, Type, 0> {
-        TYPE_INFO("InsertByIndex", "insert one type or arbitrary length types list at the target TypesList by index: use only with TypesList-struct");
-
+        EXPLICIT_TYPE_INFO
         using Result = AppendFront_R<TypesList<Head, Tail>, Type>;
     };
 
     template<class Head, class Tail>
     struct InsertByIndex<NullType, TypesList<Head, Tail>, 0> {
-        TYPE_INFO("InsertByIndex", "insert one type or arbitrary length types list at the target TypesList by index: use only with TypesList-struct");
-
+        EXPLICIT_TYPE_INFO
         using Result = TypesList<Head, Tail>;
     };
 
     template<class Type>
     struct InsertByIndex<NullType, Type, 0> {
-        TYPE_INFO("InsertByIndex", "insert one type or arbitrary length types list at the target TypesList by index: use only with TypesList-struct");
-
+        EXPLICIT_TYPE_INFO
         using Result = TypesList<Type, NullType>;
     };
+
+#undef EXPLICIT_TYPE_INFO
 
     template<class TypesList, class Type, uint8_t index>
     using InsertByIndex_R = typename InsertByIndex<TypesList, Type, index>::Result;
@@ -405,36 +441,275 @@ namespace TL {
 
 #pragma region RemoveBack
     // SECTION: RemoveBack
-    // brief: remove last type from target TypesList
+    // brief: removes last type from target TypesList
     // example 1: RemoveBack_R<INTs_t> // --> [int8_t, int16_t, int32_t]
     // example 2: RemoveBack_R<RemoveBack_R<INTs_t>> // --> [int8_t, int16_t]
     // example 3: RemoveBack_R<RemoveBack_R<RemoveBack_R<INTs_t>>> // --> [int8_t]
     // example 4: RemoveBack_R<RemoveBack_R<RemoveBack_R<RemoveBack_R<INTs_t>>>> // --> []
     // example 5: RemoveBack_R<RemoveBack_R<RemoveBack_R<RemoveBack_R<RemoveBack_R<INTs_t>>>>> // --> compilation error
 
+#define EXPLICIT_TYPE_INFO TYPE_INFO("RemoveBack", "removes last type from target TypesList: use only with TypesList-struct");
+
     template<class TypesList_t>
     struct RemoveBack {
-        TYPE_INFO("RemoveBack", "remove last type from target TypesList: use only with TypesList-struct");
-
-        static_assert(!std::is_same_v<TypesList_t, NullType>, "forbidden to apply RemoveBack-struct to NullType-struct");
+        EXPLICIT_TYPE_INFO
+        static_assert(AlwaysFalse_R<TypesList_t>, "forbidden to use RemoveBack with not TypesList-struct");
     };
 
     template<class Head, class Tail>
     struct RemoveBack<TypesList<Head, Tail>> {
-        TYPE_INFO("RemoveBack", "remove last type from target TypesList: use only with TypesList-struct");
-
+        EXPLICIT_TYPE_INFO
         using Result = TypesList<Head, typename RemoveBack<Tail>::Result>;
     };
 
     template<class Head>
     struct RemoveBack<TypesList<Head, NullType>> {
-        TYPE_INFO("RemoveBack", "remove last type from target TypesList: use only with TypesList-struct");
+        EXPLICIT_TYPE_INFO
+        using Result = NullType;
+    };
+
+#undef EXPLICIT_TYPE_INFO
+
+    template<class TypesList_t>
+    using RemoveBack_R = typename RemoveBack<TypesList_t>::Result;
+#pragma endregion
+
+
+#pragma region RemoveFront
+    // SECTION: RemoveFront
+    // brief: removes first type from target TypesList
+    // example 1: RemoveFront_R<INTs_t> // --> [int16_t, int32_t, int64_t]
+    // example 2: RemoveFront_R<RemoveFront_R<INTs_t>> // --> [int32_t, int64_t]
+    // example 3: RemoveFront_R<RemoveFront_R<RemoveFront_R<INTs_t>>> // --> [int64_t]
+    // example 4: RemoveFront_R<RemoveFront_R<RemoveFront_R<RemoveFront_R<INTs_t>>>> // --> []
+    // example 5: RemoveFront_R<RemoveFront_R<RemoveFront_R<RemoveFront_R<RemoveFront_R<INTs_t>>>>> // --> compilation error
+
+#define EXPLICIT_TYPE_INFO TYPE_INFO("RemoveFront", "removes first type from target TypesList: use only with TypesList-struct");
+
+    template<class TypesList_t>
+    struct RemoveFront {
+        EXPLICIT_TYPE_INFO
+        static_assert(AlwaysFalse_R<TypesList_t>, "forbidden to use RemoveFront with not TypesList-struct");
+    };
+
+    template<class Head, class Tail>
+    struct RemoveFront<TypesList<Head, Tail>> {
+        EXPLICIT_TYPE_INFO
+        using Result = Tail;
+    };
+
+#undef EXPLICIT_TYPE_INFO
+
+    template<class TypesList_t>
+    using RemoveFront_R = typename RemoveFront<TypesList_t>::Result;
+#pragma endregion
+
+
+#pragma region RemoveByIndex
+    // SECTION: RemoveByIndex
+    // brief: removes type from target TypesList by index
+    // example 1: RemoveByIndex<INTs_t, 0> // --> [int16_t, int32_t, int64_t]
+    // example 2: RemoveByIndex<INTs_t, 1> // --> [int8_t, int32_t, int64_t]
+    // example 3: RemoveByIndex<INTs_t, 2> // --> [int8_t, int16_t, int64_t]
+    // example 4: RemoveByIndex<INTs_t, 3> // --> [int8_t, int16_t, int32_t]
+
+#define EXPLICIT_TYPE_INFO TYPE_INFO("RemoveByIndex", "removes type from target TypesList by index: use only with TypesList-struct");
+
+    template<class TypesList_t, uint8_t index>
+    struct RemoveByIndex {
+        EXPLICIT_TYPE_INFO
+        static_assert(AlwaysFalse_R<TypesList_t>, "forbidden to use RemoveByIndex with not TypesList-struct");
+    };
+
+    template<uint8_t index>
+    struct RemoveByIndex<NullType, index> {
+        EXPLICIT_TYPE_INFO
+        static_assert(AlwaysFalse_R<index>, "index of TypesList out of range");
+    };
+
+    template<class Head, class Tail, uint8_t index>
+    struct RemoveByIndex<TypesList<Head, Tail>, index> {
+        EXPLICIT_TYPE_INFO
+        using Result = TypesList<Head, typename RemoveByIndex<Tail, index - 1>::Result>;
+    };
+
+    template<class Head, class Tail>
+    struct RemoveByIndex<TypesList<Head, Tail>, 0> {
+        EXPLICIT_TYPE_INFO
+        using Result = Tail;
+    };
+
+#undef EXPLICIT_TYPE_INFO
+
+    template<class TypesList_t, uint8_t index>
+    using RemoveByIndex_R = typename RemoveByIndex<TypesList_t, index>::Result;
+#pragma endregion
+
+
+#pragma region RemoveFromSize
+    // SECTION: RemoveFromSize
+    // brief: removes the types since from-index to from+size-index from target TypesList
+    // example 1: TL::RemoveFromSize_R<ALL_INTs_t, 0, 1> // --> [uint16_t, uint32_t, uint64_t, int8_t, int16_t, int32_t, int64_t]
+    // example 1: TL::RemoveFromSize_R<ALL_INTs_t, 1, 1> // --> [uint8_t, uint32_t, uint64_t, int8_t, int16_t, int32_t, int64_t]
+    // example 1: TL::RemoveFromSize_R<ALL_INTs_t, 2, 1> // --> [uint8_t, uint16_t, uint64_t, int8_t, int16_t, int32_t, int64_t]
+    // example 1: TL::RemoveFromSize_R<ALL_INTs_t, 3, 1> // --> [uint8_t, uint16_t, uint32_t, int8_t, int16_t, int32_t, int64_t]
+    // example 1: TL::RemoveFromSize_R<ALL_INTs_t, 4, 1> // --> [uint8_t, uint16_t, uint32_t, uint64_t, int16_t, int32_t, int64_t]
+    // example 1: TL::RemoveFromSize_R<ALL_INTs_t, 5, 1> // --> [uint8_t, uint16_t, uint32_t, uint64_t, int8_t, int32_t, int64_t]
+    // example 1: TL::RemoveFromSize_R<ALL_INTs_t, 6, 1> // --> [uint8_t, uint16_t, uint32_t, uint64_t, int8_t, int16_t, int64_t]
+    // example 1: TL::RemoveFromSize_R<ALL_INTs_t, 7, 1> // --> [uint8_t, uint16_t, uint32_t, uint64_t, int8_t, int16_t, int32_t]
+    // example 1: TL::RemoveFromSize_R<ALL_INTs_t, 0, 4> // --> [int8_t, int16_t, int32_t, int64_t]
+    // example 1: TL::RemoveFromSize_R<ALL_INTs_t, 1, 4> // --> [uint8_t, int16_t, int32_t, int64_t]
+    // example 1: TL::RemoveFromSize_R<ALL_INTs_t, 2, 4> // --> [uint8_t, uint16_t, int32_t, int64_t]
+    // example 1: TL::RemoveFromSize_R<ALL_INTs_t, 3, 4> // --> [uint8_t, uint16_t, uint32_t, int64_t]
+    // example 1: TL::RemoveFromSize_R<ALL_INTs_t, 4, 4> // --> [uint8_t, uint16_t, uint32_t, uint64_t]
+
+    template<class TypesList_t, uint8_t from, uint8_t size>
+    struct RemoveFromSize {
+        TYPE_INFO("RemoveFromSize", "removes the types since from-index to from+size-index from target TypesList: use only with TypesList-struct");
+
+        static_assert(AlwaysFalse_R<TypesList_t>, "forbidden to use RemoveFromSize with not TypesList-struct");
+    };
+
+    template<uint8_t from, uint8_t size>
+    struct RemoveFromSize<NullType, from, size> {
+        TYPE_INFO("RemoveFromSize", "removes the types since from-index to from+size-index from target TypesList: use only with TypesList-struct");
+
+        static_assert(from == 0, "from-index of TypesList out of range");
+        static_assert(size == 0, "size-value is more than available size of target TypesList");
+    };
+
+    template<class Head, class Tail, uint8_t from, uint8_t size>
+    struct RemoveFromSize<TypesList<Head, Tail>, from, size> {
+        TYPE_INFO("RemoveFromSize", "removes the types since from-index to from+size-index from target TypesList: use only with TypesList-struct");
+
+        static_assert(size > 0, "size-value must be greater 0");
+        using Result = TypesList<Head, typename RemoveFromSize<Tail, from - 1, size>::Result>;
+    };
+
+    template<class Head, class Tail, uint8_t size>
+    struct RemoveFromSize<TypesList<Head, Tail>, 0, size> {
+        TYPE_INFO("RemoveFromSize", "removes the types since from-index to from+size-index from target TypesList: use only with TypesList-struct");
+
+        using Result = typename RemoveFromSize<Tail, 0, size - 1>::Result;
+    };
+
+    template<class Head, class Tail>
+    struct RemoveFromSize<TypesList<Head, Tail>, 0, 0> {
+        TYPE_INFO("RemoveFromSize", "removes the types since from-index to from+size-index from target TypesList: use only with TypesList-struct");
+
+        using Result = TypesList<Head, typename RemoveFromSize<Tail, 0, 0>::Result>;
+    };
+
+    template<>
+    struct RemoveFromSize<NullType, 0, 0> {
+        TYPE_INFO("RemoveFromSize", "removes the types since from-index to from+size-index from target TypesList: use only with TypesList-struct");
 
         using Result = NullType;
     };
 
-    template<class TypesList_t>
-    using RemoveBack_R = typename RemoveBack<TypesList_t>::Result;
+    template<class TypesList_t, uint8_t from, uint8_t size>
+    using RemoveFromSize_R = typename RemoveFromSize<TypesList_t, from, size>::Result;
+#pragma endregion
+
+
+#pragma region CutFromSize
+    // SECTION: CutFromSize
+    // brief: cuts out the types since from-index to from+size-index from target TypesList
+    // example 1: TL::CutFromSize_R<ALL_INTs_t, 0, 1> // --> [uint8_t]
+    // example 1: TL::CutFromSize_R<ALL_INTs_t, 1, 1> // --> [uint16_t]
+    // example 1: TL::CutFromSize_R<ALL_INTs_t, 2, 1> // --> [uint32_t]
+    // example 1: TL::CutFromSize_R<ALL_INTs_t, 3, 1> // --> [uint64_t]
+    // example 1: TL::CutFromSize_R<ALL_INTs_t, 4, 1> // --> [int8_t]
+    // example 1: TL::CutFromSize_R<ALL_INTs_t, 5, 1> // --> [int16_t]
+    // example 1: TL::CutFromSize_R<ALL_INTs_t, 6, 1> // --> [int32_t]
+    // example 1: TL::CutFromSize_R<ALL_INTs_t, 7, 1> // --> [int64_t]
+    // example 1: TL::CutFromSize_R<ALL_INTs_t, 0, 4> // --> [uint8_t, uint16_t, uint32_t, uint64_t]
+    // example 1: TL::CutFromSize_R<ALL_INTs_t, 1, 4> // --> [uint16_t, uint32_t, uint64_t, int8_t]
+    // example 1: TL::CutFromSize_R<ALL_INTs_t, 2, 4> // --> [uint32_t, uint64_t, int8_t, int16_t]
+    // example 1: TL::CutFromSize_R<ALL_INTs_t, 3, 4> // --> [uint64_t, int8_t, int16_t, int32_t]
+    // example 1: TL::CutFromSize_R<ALL_INTs_t, 4, 4> // --> [int8_t, int16_t, int32_t, int64_t]
+
+#define EXPLICIT_TYPE_INFO TYPE_INFO("CutFromSize", "cuts out the types since from-index to from+size-index from target TypesList: use only with TypesList-struct");
+
+    template<class TypesList_t, uint8_t from, uint8_t size>
+    struct CutFromSize {
+        EXPLICIT_TYPE_INFO
+        static_assert(AlwaysFalse_R<TypesList_t>, "forbidden to use CutFromSize with not TypesList-struct");
+    };
+
+    template<uint8_t from, uint8_t size>
+    struct CutFromSize<NullType, from, size> {
+        EXPLICIT_TYPE_INFO
+        static_assert(from == 0, "from-index of TypesList out of range");
+        static_assert(size == 0, "size-value is more than available size of target TypesList");
+    };
+
+    template<class Head, class Tail, uint8_t from, uint8_t size>
+    struct CutFromSize<TypesList<Head, Tail>, from, size> {
+        EXPLICIT_TYPE_INFO
+        static_assert(size > 0, "size-value must be greater 0");
+        using Result = typename CutFromSize<Tail, from - 1, size>::Result;
+    };
+
+    template<class Head, class Tail, uint8_t size>
+    struct CutFromSize<TypesList<Head, Tail>, 0, size> {
+        EXPLICIT_TYPE_INFO
+        static_assert(size > 0, "size-value must be greater 0");
+        using Result = TypesList<Head, typename CutFromSize<Tail, 0, size - 1>::Result>;
+    };
+
+    template<class Head, class Tail>
+    struct CutFromSize<TypesList<Head, Tail>, 0, 1> {
+        EXPLICIT_TYPE_INFO
+        using Result = TypesList<Head, NullType>;
+    };
+
+#undef EXPLICIT_TYPE_INFO
+
+    template<class TypesList_t, uint8_t from, uint8_t size>
+    using CutFromSize_R = typename CutFromSize<TypesList_t, from, size>::Result;
+#pragma endregion
+
+
+#pragma region Remove
+    // SECTION: Remove
+
+#define EXPLICIT_TYPE_INFO TYPE_INFO("Remove", "...");
+
+    template<class TypesList_t, class Type, uint8_t quantity>
+    struct Remove {
+        EXPLICIT_TYPE_INFO
+        static_assert(AlwaysFalse_R<TypesList_t>, "forbidden to use CutFromSize with not TypesList-struct");
+    };
+
+    template<class Head, class Tail, class Type, uint8_t quantity>
+    struct Remove<TypesList<Head, Tail>, Type, quantity> {
+        EXPLICIT_TYPE_INFO
+        using Result = TypesList<Head, typename Remove<Tail, Type, quantity>::Result>;
+    }
+
+    template<class Head, class Tail, uint8_t quantity>
+    struct Remove<TypesList<Head, Tail>, Head, quantity> {
+        EXPLICIT_TYPE_INFO
+        using Result = TypesList<Head, typename Remove<Tail, Type, quantity - 1>::Result>;
+    }
+
+    template<class Head, class Tail>
+    struct Remove<TypesList<Head, Tail>, Head, 0> {
+        EXPLICIT_TYPE_INFO
+        using Result = typename Remove<Tail, Type, 0>::Result;
+    }
+
+#undef EXPLICIT_TYPE_INFO
+
+    template<class TypesList_t, class Type, uint8_t quantity>
+    using Remove_R = typename Remove<TypesList_t, Type, quantity>::Result;
+
+    template<class TypesList_t, class Type>
+    using RemoveAll_R = Remove_R<TypesList_t, Type, UINT8_MAX>;
+
+    template<class TypesList_t, class Type>
+    using RemoveAllCopy_R = Remove_R<TypesList_t, Type, 1>;
 #pragma endregion
 }
 

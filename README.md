@@ -1,8 +1,9 @@
 # TypesList
 It is a library provided structs and type-constructor-struct for manipulation of types as if a list-data-structure is used
 ***
-## Plan
+## Content (Plan)
 * [ ] namespace: TL:
+    * [x] struct: Always(True|False) - returns boolean (true/false) regardless of type
     * [x] struct: TypeInfo - if Type is compatibility - provides information about type; compilation error - vise versa
     * [x] struct: TypesList - base struct of TL-logic is one list of cpp-types
     * [x] struct: CreateTypesList - creates arbitrary length list of types
@@ -12,12 +13,14 @@ It is a library provided structs and type-constructor-struct for manipulation of
     * [x] struct: AppendBack - appends one type or arbitrary length types list at the end of the target TypesList
     * [x] struct: AppendFront - appends one type or arbitrary length types list at the end of the target TypesList to front
     * [x] struct: InsertByIndex - insert one type or arbitrary length types list at the target TypesList by index
-    * [x] struct: RemoveBack - remove last type from target TypesList
-    * [ ] struct: RemoveFront
-    * [ ] struct: RemoveByIndex
-    * [ ] struct: CutFromTo
+    * [x] struct: RemoveBack - removes last type from target TypesList
+    * [x] struct: RemoveFront - removes first type from target TypesList
+    * [x] struct: RemoveByIndex - removes type from target TypesList by index
+    * [x] struct: RemoveFromSize - removes the types since from-index to from+size-index from target TypesList
+    * [x] struct: CutFromSize - cuts out the types since from-index to from+size-index from target TypesList
+    * [ ] struct: Remove
     * [ ] struct: RemoveAll
-    * [ ] struct: RemoveCopy
+    * [ ] struct: RemoveAllCopy
     * [ ] struct: RemoveAllCopies
 ### Suggestions for improvement
 * [ ] develop and use `sc_string`-cpp-class which provides static-compiler-strings, and use it for modernize static assertion messages as:

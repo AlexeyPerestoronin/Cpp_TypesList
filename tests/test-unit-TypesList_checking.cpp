@@ -1,8 +1,10 @@
 #include <gtest/gtest.h>
 #include <TypesList.hpp>
 
+// test types lists
 using UINTs_t = TL::CreateTypesList_R<uint8_t, uint16_t, uint32_t, uint64_t>;
 using INTs_t = TL::CreateTypesList_R<int8_t, int16_t, int32_t, int64_t>;
+using ALL_INTs_t = TL::AppendBack_R<UINTs_t, INTs_t>;
 
 
 TEST(TypesList, Size) {
@@ -312,6 +314,464 @@ TEST(TypesList, RemoveBack) {
 
     //using ERROR_1_t = TL::RemoveBack_R<TL::NullType>; // compilation error
     //using ERROR_2_t = TL::RemoveBack_R<int>; // compilation error
+}
+
+
+TEST(TypesList, RemoveFront) {
+    using NOT_ALL_INTs_3_t = TL::RemoveFront_R<INTs_t>;
+    EXPECT_EQ(NOT_ALL_INTs_3_t::size, INTs_t::size - 1);
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_3_t, 0>, TL::GetTypeByIndex_R<INTs_t, 1>>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_3_t, 1>, TL::GetTypeByIndex_R<INTs_t, 2>>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_3_t, 2>, TL::GetTypeByIndex_R<INTs_t, 3>>));
+    //EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_3_t, 3>, TL::GetTypeByIndex_R<INTs_t, 3>>)); // compilation error
+
+    using NOT_ALL_INTs_2_t = TL::RemoveFront_R<NOT_ALL_INTs_3_t>;
+    EXPECT_EQ(NOT_ALL_INTs_2_t::size, NOT_ALL_INTs_3_t::size - 1);
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_2_t, 0>, TL::GetTypeByIndex_R<INTs_t, 2>>));
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_2_t, 1>, TL::GetTypeByIndex_R<INTs_t, 3>>));
+    //EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_2_t, 2>, TL::GetTypeByIndex_R<INTs_t, 2>>)); // compilation error
+
+    using NOT_ALL_INTs_1_t = TL::RemoveFront_R<NOT_ALL_INTs_2_t>;
+    EXPECT_EQ(NOT_ALL_INTs_1_t::size, NOT_ALL_INTs_2_t::size - 1);
+    EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_1_t, 0>, TL::GetTypeByIndex_R<INTs_t, 3>>));
+    //EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_1_t, 1>, TL::GetTypeByIndex_R<INTs_t, 1>>)); // compilation error
+
+    EXPECT_TRUE((std::is_same_v<TL::RemoveFront_R<NOT_ALL_INTs_1_t>, TL::NullType>));
+
+    //using ERROR_1_t = TL::RemoveFront_R<TL::NullType>; // compilation error
+    //using ERROR_2_t = TL::RemoveFront_R<int>; // compilation error
+}
+
+
+TEST(TypesList, RemoveByIndex) {
+    {
+        using NOT_ALL_INTs_t = TL::RemoveByIndex_R<INTs_t, 0>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, INTs_t::size - 1);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<INTs_t, 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<INTs_t, 2>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<INTs_t, 3>>));
+    }
+    {
+        using NOT_ALL_INTs_t = TL::RemoveByIndex_R<INTs_t, 1>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, INTs_t::size - 1);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<INTs_t, 0>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<INTs_t, 2>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<INTs_t, 3>>));
+    }
+    {
+        using NOT_ALL_INTs_t = TL::RemoveByIndex_R<INTs_t, 2>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, INTs_t::size - 1);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<INTs_t, 0>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<INTs_t, 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<INTs_t, 3>>));
+    }
+    {
+        using NOT_ALL_INTs_t = TL::RemoveByIndex_R<INTs_t, 3>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, INTs_t::size - 1);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<INTs_t, 0>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<INTs_t, 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<INTs_t, 2>>));
+    }
+    {
+        //using NOT_ALL_INTs_t = TL::RemoveByIndex_R<INTs_t, 4>; // compilation error
+        //using NOT_ALL_INTs_t = TL::RemoveByIndex_R<INTs_t, 5>; // compilation error
+    }
+}
+
+
+TEST(TypesList, CutFromSize) {
+    {
+        constexpr uint8_t size = 0;
+        //using NOT_ALL_INTs_1_t = TL::CutFromSize_R<ALL_INTs_t, 0, size>; // compilation error
+        //using NOT_ALL_INTs_2_t = TL::CutFromSize_R<ALL_INTs_t, 1, size>; // compilation error
+        //using NOT_ALL_INTs3__t = TL::CutFromSize_R<ALL_INTs_t, 2, size>; // compilation error
+    }
+    {
+        constexpr uint8_t from = 7, size = 2;
+        //using NOT_ALL_INTs_t = TL::CutFromSize_R<ALL_INTs_t, from, size>; // compilation error
+    }
+    {
+        constexpr uint8_t from = 6, size = 3;
+        //using NOT_ALL_INTs_t = TL::CutFromSize_R<ALL_INTs_t, from, size>; // compilation error
+    }
+    {
+        constexpr uint8_t from = 5, size = 4;
+        //using NOT_ALL_INTs_t = TL::CutFromSize_R<ALL_INTs_t, from, size>; // compilation error
+    }
+    {
+        constexpr uint8_t from = 4, size = 5;
+        //using NOT_ALL_INTs_t = TL::CutFromSize_R<ALL_INTs_t, from, size>; // compilation error
+    }
+    {
+        constexpr uint8_t from = 3, size = 6;
+        //using NOT_ALL_INTs_t = TL::CutFromSize_R<ALL_INTs_t, from, size>; // compilation error
+    }
+    {
+        constexpr uint8_t from = 2, size = 7;
+        //using NOT_ALL_INTs_t = TL::CutFromSize_R<ALL_INTs_t, from, size>; // compilation error
+    }
+    {
+        constexpr uint8_t from = 1, size = 8;
+        //using NOT_ALL_INTs_t = TL::CutFromSize_R<ALL_INTs_t, from, size>; // compilation error
+    }
+    {
+        constexpr uint8_t from = 0, size = 9;
+        //using NOT_ALL_INTs_t = TL::CutFromSize_R<ALL_INTs_t, from, size>; // compilation error
+    }
+    {
+        constexpr uint8_t from = 0, size = 8;
+        using NOT_ALL_INTs_t = TL::CutFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, ALL_INTs_t::size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, 0>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<ALL_INTs_t, 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<ALL_INTs_t, 2>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 3>, TL::GetTypeByIndex_R<ALL_INTs_t, 3>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 4>, TL::GetTypeByIndex_R<ALL_INTs_t, 4>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 5>, TL::GetTypeByIndex_R<ALL_INTs_t, 5>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 6>, TL::GetTypeByIndex_R<ALL_INTs_t, 6>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 7>, TL::GetTypeByIndex_R<ALL_INTs_t, 7>>));
+    }
+    {
+        constexpr uint8_t from = 0, size = 1;
+        using NOT_ALL_INTs_t = TL::CutFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 0>>));
+    }
+    {
+        constexpr uint8_t from = 1, size = 1;
+        using NOT_ALL_INTs_t = TL::CutFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 0>>));
+    }
+    {
+        constexpr uint8_t from = 2, size = 1;
+        using NOT_ALL_INTs_t = TL::CutFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 0>>));
+    }
+    {
+        constexpr uint8_t from = 3, size = 1;
+        using NOT_ALL_INTs_t = TL::CutFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 0>>));
+    }
+    {
+        constexpr uint8_t from = 4, size = 1;
+        using NOT_ALL_INTs_t = TL::CutFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 0>>));
+    }
+    {
+        constexpr uint8_t from = 5, size = 1;
+        using NOT_ALL_INTs_t = TL::CutFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 0>>));
+    }
+    {
+        constexpr uint8_t from = 6, size = 1;
+        using NOT_ALL_INTs_t = TL::CutFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 0>>));
+    }
+    {
+        constexpr uint8_t from = 7, size = 1;
+        using NOT_ALL_INTs_t = TL::CutFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 0>>));
+    }
+    {
+        constexpr uint8_t from = 0, size = 3;
+        using NOT_ALL_INTs_t = TL::CutFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 0>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 2>>));
+    }
+    {
+        constexpr uint8_t from = 1, size = 3;
+        using NOT_ALL_INTs_t = TL::CutFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 0>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 2>>));
+    }
+    {
+        constexpr uint8_t from = 2, size = 3;
+        using NOT_ALL_INTs_t = TL::CutFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 0>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 2>>));
+    }
+    {
+        constexpr uint8_t from = 3, size = 3;
+        using NOT_ALL_INTs_t = TL::CutFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 0>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 2>>));
+    }
+    {
+        constexpr uint8_t from = 0, size = 4;
+        using NOT_ALL_INTs_t = TL::CutFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 0>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 2>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 3>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 3>>));
+    }
+    {
+        constexpr uint8_t from = 1, size = 4;
+        using NOT_ALL_INTs_t = TL::CutFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 0>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 2>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 3>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 3>>));
+    }
+    {
+        constexpr uint8_t from = 2, size = 4;
+        using NOT_ALL_INTs_t = TL::CutFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 0>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 2>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 3>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 3>>));
+    }
+    {
+        constexpr uint8_t from = 3, size = 4;
+        using NOT_ALL_INTs_t = TL::CutFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 0>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 2>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 3>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 3>>));
+    }
+    {
+        constexpr uint8_t from = 4, size = 4;
+        using NOT_ALL_INTs_t = TL::CutFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 0>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 2>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 3>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 3>>));
+    }
+}
+
+
+TEST(TypesList, RemoveFromSize) {
+    {
+        constexpr uint8_t from = 4, size = 0;
+        //using ERROR_t = TL::RemoveFromSize_R<char, from, size>; // compilation error
+    }
+    {
+        constexpr uint8_t from = 4, size = 0;
+        //using NOT_ALL_INTs_t = TL::RemoveFromSize_R<ALL_INTs_t, from, size>; // compilation error
+    }
+    {
+        constexpr uint8_t from = 8, size = 3;
+        //using NOT_ALL_INTs_t = TL::RemoveFromSize_R<ALL_INTs_t, from, size>; // compilation error
+    }
+    {
+        constexpr uint8_t from = 4, size = 8;
+        //using NOT_ALL_INTs_t = TL::RemoveFromSize_R<ALL_INTs_t, from, size>; // compilation error
+    }
+    {
+        constexpr uint8_t from = 0, size = 1;
+        using NOT_ALL_INTs_t = TL::RemoveFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, ALL_INTs_t::size - size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, size>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 2>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 3>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 3>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 4>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 4>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 5>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 5>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 6>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 6>>));
+    }
+    {
+        constexpr uint8_t from = 1, size = 1;
+        using NOT_ALL_INTs_t = TL::RemoveFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, ALL_INTs_t::size - size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, 0>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 2>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 3>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 3>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 4>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 4>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 5>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 5>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 6>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 6>>));
+    }
+    {
+        constexpr uint8_t from = 2, size = 1;
+        using NOT_ALL_INTs_t = TL::RemoveFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, ALL_INTs_t::size - size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, 0>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<ALL_INTs_t, 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 2>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 3>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 3>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 4>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 4>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 5>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 5>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 6>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 6>>));
+    }
+    {
+        constexpr uint8_t from = 3, size = 1;
+        using NOT_ALL_INTs_t = TL::RemoveFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, ALL_INTs_t::size - size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, 0>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<ALL_INTs_t, 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<ALL_INTs_t, 2>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 3>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 3>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 4>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 4>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 5>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 5>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 6>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 6>>));
+    }
+    {
+        constexpr uint8_t from = 4, size = 1;
+        using NOT_ALL_INTs_t = TL::RemoveFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, ALL_INTs_t::size - size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, 0>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<ALL_INTs_t, 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<ALL_INTs_t, 2>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 3>, TL::GetTypeByIndex_R<ALL_INTs_t, 3>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 4>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 4>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 5>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 5>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 6>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 6>>));
+    }
+    {
+        constexpr uint8_t from = 5, size = 1;
+        using NOT_ALL_INTs_t = TL::RemoveFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, ALL_INTs_t::size - size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, 0>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<ALL_INTs_t, 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<ALL_INTs_t, 2>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 3>, TL::GetTypeByIndex_R<ALL_INTs_t, 3>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 4>, TL::GetTypeByIndex_R<ALL_INTs_t, 4>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 5>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 5>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 6>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 6>>));
+    }
+    {
+        constexpr uint8_t from = 6, size = 1;
+        using NOT_ALL_INTs_t = TL::RemoveFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, ALL_INTs_t::size - size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, 0>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<ALL_INTs_t, 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<ALL_INTs_t, 2>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 3>, TL::GetTypeByIndex_R<ALL_INTs_t, 3>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 4>, TL::GetTypeByIndex_R<ALL_INTs_t, 4>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 5>, TL::GetTypeByIndex_R<ALL_INTs_t, 5>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 6>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 6>>));
+    }
+    {
+        constexpr uint8_t from = 7, size = 1;
+        using NOT_ALL_INTs_t = TL::RemoveFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, ALL_INTs_t::size - size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, 0>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<ALL_INTs_t, 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<ALL_INTs_t, 2>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 3>, TL::GetTypeByIndex_R<ALL_INTs_t, 3>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 4>, TL::GetTypeByIndex_R<ALL_INTs_t, 4>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 5>, TL::GetTypeByIndex_R<ALL_INTs_t, 5>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 6>, TL::GetTypeByIndex_R<ALL_INTs_t, 6>>));
+    }
+    {
+        constexpr uint8_t from = 0, size = 3;
+        using NOT_ALL_INTs_t = TL::RemoveFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, ALL_INTs_t::size - size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, size>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 2>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 3>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 3>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 4>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 4>>));
+    }
+    {
+        constexpr uint8_t from = 1, size = 3;
+        using NOT_ALL_INTs_t = TL::RemoveFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, ALL_INTs_t::size - size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, 0>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 2>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 3>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 3>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 4>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 4>>));
+    }
+    {
+        constexpr uint8_t from = 2, size = 3;
+        using NOT_ALL_INTs_t = TL::RemoveFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, ALL_INTs_t::size - size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, 0>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<ALL_INTs_t, 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 2>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 3>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 3>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 4>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 4>>));
+    }
+    {
+        constexpr uint8_t from = 3, size = 3;
+        using NOT_ALL_INTs_t = TL::RemoveFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, ALL_INTs_t::size - size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, 0>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<ALL_INTs_t, 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<ALL_INTs_t, 2>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 3>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 3>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 4>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 4>>));
+    }
+    {
+        constexpr uint8_t from = 4, size = 3;
+        using NOT_ALL_INTs_t = TL::RemoveFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, ALL_INTs_t::size - size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, 0>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<ALL_INTs_t, 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<ALL_INTs_t, 2>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 3>, TL::GetTypeByIndex_R<ALL_INTs_t, 3>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 4>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 4>>));
+    }
+    {
+        constexpr uint8_t from = 5, size = 3;
+        using NOT_ALL_INTs_t = TL::RemoveFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, ALL_INTs_t::size - size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, 0>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<ALL_INTs_t, 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<ALL_INTs_t, 2>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 3>, TL::GetTypeByIndex_R<ALL_INTs_t, 3>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 4>, TL::GetTypeByIndex_R<ALL_INTs_t, 4>>));
+    }
+    {
+        constexpr uint8_t from = 0, size = 4;
+        using NOT_ALL_INTs_t = TL::RemoveFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, ALL_INTs_t::size - size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, size>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 2>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 3>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 3>>));
+    }
+    {
+        constexpr uint8_t from = 0, size = 5;
+        using NOT_ALL_INTs_t = TL::RemoveFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, ALL_INTs_t::size - size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, size>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 1>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 2>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 2>>));
+    }
+    {
+        constexpr uint8_t from = 0, size = 6;
+        using NOT_ALL_INTs_t = TL::RemoveFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, ALL_INTs_t::size - size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, size>>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 1>, TL::GetTypeByIndex_R<ALL_INTs_t, size + 1>>));
+    }
+    {
+        constexpr uint8_t from = 0, size = 7;
+        using NOT_ALL_INTs_t = TL::RemoveFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, ALL_INTs_t::size - size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 0>, TL::GetTypeByIndex_R<ALL_INTs_t, size>>));
+    }
+    {
+        constexpr uint8_t from = 0, size = 8;
+        using NOT_ALL_INTs_t = TL::RemoveFromSize_R<ALL_INTs_t, from, size>;
+        EXPECT_EQ(NOT_ALL_INTs_t::size, ALL_INTs_t::size - size);
+        EXPECT_TRUE((std::is_same_v<NOT_ALL_INTs_t, TL::NullType>));
+    }
+}
+
+
+TEST(TypesList, Remove) {
 }
 
 
