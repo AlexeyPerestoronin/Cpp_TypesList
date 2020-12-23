@@ -6,12 +6,10 @@ using UINTs_t = TL::CreateTypesList_R<uint8_t, uint16_t, uint32_t, uint64_t>;
 using INTs_t = TL::CreateTypesList_R<int8_t, int16_t, int32_t, int64_t>;
 using ALL_INTs_t = TL::AppendBack_R<UINTs_t, INTs_t>;
 
-
 TEST(TypesList, Size) {
     EXPECT_EQ(UINTs_t::size, 4);
     EXPECT_EQ(INTs_t::size, 4);
 }
-
 
 TEST(TypesList, GetTypeByIndex) {
     EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<UINTs_t, 0>, uint8_t>));
@@ -39,7 +37,6 @@ TEST(TypesList, GetTypeByIndex) {
     //EXPECT_FALSE((std::is_same_v<TL::GetTypeByIndex_R<INTs_t, 8>, int64_t>)); // compilation error
 }
 
-
 TEST(TypesList, GetIndexByType) {
     EXPECT_EQ((TL::GetIndexByType_R<UINTs_t, uint8_t>), 0);
     EXPECT_EQ((TL::GetIndexByType_R<UINTs_t, uint16_t>), 1);
@@ -66,7 +63,6 @@ TEST(TypesList, GetIndexByType) {
     //EXPECT_NE((TL::GetIndexByType_R<INTs_t, std::string>), 0); // compilation error
 }
 
-
 TEST(TypesList, IsInList) {
     EXPECT_TRUE((TL::IsInList_R<UINTs_t, uint8_t>));
     EXPECT_TRUE((TL::IsInList_R<UINTs_t, uint16_t>));
@@ -78,7 +74,6 @@ TEST(TypesList, IsInList) {
     EXPECT_FALSE((TL::IsInList_R<UINTs_t, int32_t>));
     EXPECT_FALSE((TL::IsInList_R<UINTs_t, int64_t>));
 }
-
 
 TEST(TypesList, AppendBack) {
     // using INT8_t_and_INT16_t = TL::AppendBack_R<int8_t, int16_t>; // compilation error
@@ -119,7 +114,6 @@ TEST(TypesList, AppendBack) {
     EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<ALL_INTs_t, 7>, uint64_t>));
     //EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<ALL_INTs_t, 8>, char>)); // compilation error
 }
-
 
 TEST(TypesList, AppendFront) {
     //using INT8_t_and_INT16_t = TL::AppendFront_R<int8_t, int16_t>; // compilation error
@@ -169,7 +163,6 @@ TEST(TypesList, AppendFront) {
     EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<ALL_INTs_t, 7>, int64_t>));
     //EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<ALL_INTs_t, 8>, int>)); // compilation error
 }
-
 
 TEST(TypesList, InsertByIndex) {
     //using int_char_t = TL::InsertByIndex_R<int, char, 1>;  // compilation error
@@ -290,7 +283,6 @@ TEST(TypesList, InsertByIndex) {
     // using ALL_INTs_t = TL::InsertByIndex_R<INTs_t, UINTs_t, 5>; // compilation error
 }
 
-
 TEST(TypesList, RemoveBack) {
     using NOT_ALL_INTs_3_t = TL::RemoveBack_R<INTs_t>;
     EXPECT_EQ(NOT_ALL_INTs_3_t::size, INTs_t::size - 1);
@@ -316,7 +308,6 @@ TEST(TypesList, RemoveBack) {
     //using ERROR_2_t = TL::RemoveBack_R<int>; // compilation error
 }
 
-
 TEST(TypesList, RemoveFront) {
     using NOT_ALL_INTs_3_t = TL::RemoveFront_R<INTs_t>;
     EXPECT_EQ(NOT_ALL_INTs_3_t::size, INTs_t::size - 1);
@@ -341,7 +332,6 @@ TEST(TypesList, RemoveFront) {
     //using ERROR_1_t = TL::RemoveFront_R<TL::NullType>; // compilation error
     //using ERROR_2_t = TL::RemoveFront_R<int>; // compilation error
 }
-
 
 TEST(TypesList, RemoveByIndex) {
     {
@@ -377,7 +367,6 @@ TEST(TypesList, RemoveByIndex) {
         //using NOT_ALL_INTs_t = TL::RemoveByIndex_R<INTs_t, 5>; // compilation error
     }
 }
-
 
 TEST(TypesList, CutFromSize) {
     {
@@ -557,7 +546,6 @@ TEST(TypesList, CutFromSize) {
         EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<NOT_ALL_INTs_t, 3>, TL::GetTypeByIndex_R<ALL_INTs_t, from + 3>>));
     }
 }
-
 
 TEST(TypesList, RemoveFromSize) {
     {
@@ -770,12 +758,10 @@ TEST(TypesList, RemoveFromSize) {
     }
 }
 
-
 using RANDOM_TYPE1s_t = TL::CreateTypesList_R<int, int, int, int>;
 using RANDOM_TYPE2s_t = TL::CreateTypesList_R<int, int, bool, bool, char, char, float, float>;
 using RANDOM_TYPE3s_t = TL::CreateTypesList_R<int, bool, char, float, int, bool, char, float>;
-using RANDOM_TYPE4s_t = TL::CreateTypesList_R<int, int, int, char, char, bool, bool, int, float, bool>;
-
+using RANDOM_TYPE4s_t = TL::CreateTypesList_R<char, int, int, char, char, bool, bool, int, float, bool>;
 
 TEST(TypesList, Count) {
     //constexpr uint8_t count_2 = TL::Count_R<int, int>; // compilation error
@@ -785,7 +771,7 @@ TEST(TypesList, Count) {
     EXPECT_EQ((TL::Count_R<RANDOM_TYPE1s_t, int>), 4);
     EXPECT_EQ((TL::Count_R<RANDOM_TYPE2s_t, int>), 2);
     EXPECT_EQ((TL::Count_R<RANDOM_TYPE3s_t, int>), 2);
-    EXPECT_EQ((TL::Count_R<RANDOM_TYPE4s_t, int>), 4);
+    EXPECT_EQ((TL::Count_R<RANDOM_TYPE4s_t, int>), 3);
 
     EXPECT_EQ((TL::Count_R<RANDOM_TYPE1s_t, bool>), 0);
     EXPECT_EQ((TL::Count_R<RANDOM_TYPE2s_t, bool>), 2);
@@ -795,28 +781,364 @@ TEST(TypesList, Count) {
     EXPECT_EQ((TL::Count_R<RANDOM_TYPE1s_t, char>), 0);
     EXPECT_EQ((TL::Count_R<RANDOM_TYPE2s_t, char>), 2);
     EXPECT_EQ((TL::Count_R<RANDOM_TYPE3s_t, char>), 2);
-    EXPECT_EQ((TL::Count_R<RANDOM_TYPE4s_t, char>), 2);
+    EXPECT_EQ((TL::Count_R<RANDOM_TYPE4s_t, char>), 3);
 
     EXPECT_EQ((TL::Count_R<RANDOM_TYPE1s_t, float>), 0);
     EXPECT_EQ((TL::Count_R<RANDOM_TYPE2s_t, float>), 2);
     EXPECT_EQ((TL::Count_R<RANDOM_TYPE3s_t, float>), 2);
     EXPECT_EQ((TL::Count_R<RANDOM_TYPE4s_t, float>), 1);
-}
 
+    EXPECT_EQ((TL::Count_R<RANDOM_TYPE1s_t, int, bool, char, float>), RANDOM_TYPE1s_t::size);
+    EXPECT_EQ((TL::Count_R<RANDOM_TYPE2s_t, int, bool, char, float>), RANDOM_TYPE2s_t::size);
+    EXPECT_EQ((TL::Count_R<RANDOM_TYPE3s_t, int, bool, char, float>), RANDOM_TYPE3s_t::size);
+    EXPECT_EQ((TL::Count_R<RANDOM_TYPE4s_t, int, bool, char, float>), RANDOM_TYPE4s_t::size);
+}
 
 TEST(TypesList, Remove) {
     {
-        using R_TYPE_t = int;
+        using type_t = int;
+        constexpr uint8_t quantity = 0;
+        using R_TYPEs_t = RANDOM_TYPE1s_t;
+        using removes_t = TL::Remove_R<R_TYPEs_t, type_t, quantity>;
+        EXPECT_EQ(removes_t::size, (R_TYPEs_t::size - TL::Count_R<R_TYPEs_t, type_t> + quantity));
+        EXPECT_TRUE((std::is_same_v<removes_t, TL::NullType>));
+    }
+    {
+        using type_t = int;
         constexpr uint8_t quantity = 1;
-        using R_TESTs_t = TL::Remove_R<RANDOM_TYPE1s_t, R_TYPE_t, quantity>;
-        EXPECT_EQ(R_TESTs_t::size, (RANDOM_TYPE1s_t::size - TL::Count_R<RANDOM_TYPE1s_t, R_TYPE_t> + quantity));
-        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<R_TESTs_t, 0>, int>));
-        //EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<R_TESTs_t, 1>, int>)); // compilation error
+        using R_TYPEs_t = RANDOM_TYPE1s_t;
+        using removes_t = TL::Remove_R<R_TYPEs_t, type_t, quantity>;
+        EXPECT_EQ(removes_t::size, (R_TYPEs_t::size - TL::Count_R<R_TYPEs_t, type_t> + quantity));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 0>, int>));
+    }
+    {
+        using type_t = int;
+        constexpr uint8_t quantity = 2;
+        using R_TYPEs_t = RANDOM_TYPE1s_t;
+        using removes_t = TL::Remove_R<R_TYPEs_t, type_t, quantity>;
+        EXPECT_EQ(removes_t::size, (R_TYPEs_t::size - TL::Count_R<R_TYPEs_t, type_t> + quantity));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 0>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 1>, int>));
+    }
+    {
+        using type_t = int;
+        constexpr uint8_t quantity = 3;
+        using R_TYPEs_t = RANDOM_TYPE1s_t;
+        using removes_t = TL::Remove_R<R_TYPEs_t, type_t, quantity>;
+        EXPECT_EQ(removes_t::size, (R_TYPEs_t::size - TL::Count_R<R_TYPEs_t, type_t> + quantity));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 0>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 1>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 2>, int>));
+    }
+    {
+        using type_t = int;
+        constexpr uint8_t quantity = 4;
+        using R_TYPEs_t = RANDOM_TYPE1s_t;
+        using removes_t = TL::Remove_R<R_TYPEs_t, type_t, quantity>;
+        EXPECT_EQ(removes_t::size, (R_TYPEs_t::size - TL::Count_R<R_TYPEs_t, type_t> + quantity));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 0>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 1>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 2>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 3>, int>));
+    }
+    {
+        using type_t = int;
+        constexpr uint8_t quantity = 0;
+        using R_TYPEs_t = RANDOM_TYPE2s_t;
+        using removes_t = TL::Remove_R<R_TYPEs_t, type_t, quantity>;
+        EXPECT_EQ(removes_t::size, (R_TYPEs_t::size - TL::Count_R<R_TYPEs_t, type_t> + quantity));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 0>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 1>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 2>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 3>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 4>, float>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 5>, float>));
+    }
+    {
+        using type_t = int;
+        constexpr uint8_t quantity = 1;
+        using R_TYPEs_t = RANDOM_TYPE2s_t;
+        using removes_t = TL::Remove_R<R_TYPEs_t, type_t, quantity>;
+        EXPECT_EQ(removes_t::size, (R_TYPEs_t::size - TL::Count_R<R_TYPEs_t, type_t> + quantity));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 0>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 1>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 2>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 3>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 4>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 5>, float>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 6>, float>));
+    }
+    {
+        using type_t = int;
+        constexpr uint8_t quantity = 2;
+        using R_TYPEs_t = RANDOM_TYPE2s_t;
+        using removes_t = TL::Remove_R<R_TYPEs_t, type_t, quantity>;
+        EXPECT_EQ(removes_t::size, RANDOM_TYPE2s_t::size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 0>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 1>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 2>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 3>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 4>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 5>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 6>, float>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 7>, float>));
+    }
+    {
+        using type_t = int;
+        constexpr uint8_t quantity = 0;
+        using R_TYPEs_t = RANDOM_TYPE3s_t;
+        using removes_t = TL::Remove_R<R_TYPEs_t, type_t, quantity>;
+        EXPECT_EQ(removes_t::size, (R_TYPEs_t::size - TL::Count_R<R_TYPEs_t, type_t> + quantity));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 0>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 1>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 2>, float>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 3>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 4>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 5>, float>));
+    }
+    {
+        using type_t = int;
+        constexpr uint8_t quantity = 1;
+        using R_TYPEs_t = RANDOM_TYPE3s_t;
+        using removes_t = TL::Remove_R<R_TYPEs_t, type_t, quantity>;
+        EXPECT_EQ(removes_t::size, (R_TYPEs_t::size - TL::Count_R<R_TYPEs_t, type_t> + quantity));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 0>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 1>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 2>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 3>, float>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 4>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 5>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 6>, float>));
+    }
+    {
+        using type_t = int;
+        constexpr uint8_t quantity = 2;
+        using R_TYPEs_t = RANDOM_TYPE3s_t;
+        using removes_t = TL::Remove_R<R_TYPEs_t, type_t, quantity>;
+        EXPECT_EQ(removes_t::size, R_TYPEs_t::size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 0>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 1>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 2>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 3>, float>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 4>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 5>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 6>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 7>, float>));
+    }
+    {
+        using type_t = int;
+        constexpr uint8_t quantity = 33;
+        using R_TYPEs_t = RANDOM_TYPE3s_t;
+        using removes_t = TL::Remove_R<R_TYPEs_t, type_t, quantity>;
+        EXPECT_EQ(removes_t::size, R_TYPEs_t::size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 0>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 1>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 2>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 3>, float>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 4>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 5>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 6>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 7>, float>));
+    }
+    {
+        using type_t = int;
+        constexpr uint8_t quantity = 0;
+        using R_TYPEs_t = RANDOM_TYPE4s_t;
+        using removes_t = TL::Remove_R<R_TYPEs_t, type_t, quantity>;
+        EXPECT_EQ(removes_t::size, (R_TYPEs_t::size - TL::Count_R<R_TYPEs_t, type_t> + quantity));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 0>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 1>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 2>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 3>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 4>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 5>, float>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 6>, bool>));
+    }
+    {
+        using type_t = int;
+        constexpr uint8_t quantity = 1;
+        using R_TYPEs_t = RANDOM_TYPE4s_t;
+        using removes_t = TL::Remove_R<R_TYPEs_t, type_t, quantity>;
+        EXPECT_EQ(removes_t::size, (R_TYPEs_t::size - TL::Count_R<R_TYPEs_t, type_t> + quantity));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 0>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 1>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 2>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 3>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 4>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 5>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 6>, float>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 7>, bool>));
+    }
+    {
+        using type_t = int;
+        constexpr uint8_t quantity = 2;
+        using R_TYPEs_t = RANDOM_TYPE4s_t;
+        using removes_t = TL::Remove_R<R_TYPEs_t, type_t, quantity>;
+        EXPECT_EQ(removes_t::size, (R_TYPEs_t::size - TL::Count_R<R_TYPEs_t, type_t> + quantity));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 0>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 1>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 2>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 3>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 4>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 5>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 6>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 7>, float>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 8>, bool>));
+    }
+    {
+        using type_t = int;
+        constexpr uint8_t quantity = 3;
+        using R_TYPEs_t = RANDOM_TYPE4s_t;
+        using removes_t = TL::Remove_R<R_TYPEs_t, type_t, quantity>;
+        EXPECT_EQ(removes_t::size, RANDOM_TYPE4s_t::size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 0>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 1>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 2>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 3>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 4>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 5>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 6>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 7>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 8>, float>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 9>, bool>));
+    }
+    {
+        using type_t = int;
+        constexpr uint8_t quantity = 33;
+        using R_TYPEs_t = RANDOM_TYPE4s_t;
+        using removes_t = TL::Remove_R<R_TYPEs_t, type_t, quantity>;
+        EXPECT_EQ(removes_t::size, RANDOM_TYPE4s_t::size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 0>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 1>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 2>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 3>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 4>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 5>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 6>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 7>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 8>, float>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 9>, bool>));
     }
 }
 
+TEST(TypesList, RemoveAll) {
+    {
+        using R_TYPEs_t = RANDOM_TYPE4s_t;
+        using removes_t = TL::RemoveAll_R<R_TYPEs_t, int>;
+        EXPECT_EQ(removes_t::size, (R_TYPEs_t::size - TL::Count_R<R_TYPEs_t, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 0>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 1>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 2>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 3>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 4>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 5>, float>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 6>, bool>));
+    }
+    {
+        using R_TYPEs_t = RANDOM_TYPE4s_t;
+        using removes_t = TL::RemoveAll_R<R_TYPEs_t, int, char>;
+        EXPECT_EQ(removes_t::size, (R_TYPEs_t::size - TL::Count_R<R_TYPEs_t, int, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 0>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 1>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 2>, float>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 3>, bool>));
+    }
+    {
+        using R_TYPEs_t = RANDOM_TYPE4s_t;
+        using removes_t = TL::RemoveAll_R<R_TYPEs_t, int, char, bool>;
+        EXPECT_EQ(removes_t::size, (R_TYPEs_t::size - TL::Count_R<R_TYPEs_t, int, char, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 0>, float>));
+    }
+    {
+        using R_TYPEs_t = RANDOM_TYPE4s_t;
+        using removes_t = TL::RemoveAll_R<R_TYPEs_t, int, char, bool, float>;
+        EXPECT_EQ(removes_t::size, 0);
+        EXPECT_TRUE((std::is_same_v<removes_t, TL::NullType>));
+    }
+}
 
-int main(int argc, char *argv[]) {
+TEST(TypesList, RemoveAllCopy) {
+    {
+        using R_TYPEs_t = RANDOM_TYPE4s_t;
+        using removes_t = TL::RemoveAllCopy_R<R_TYPEs_t, int>;
+        EXPECT_EQ(removes_t::size, (R_TYPEs_t::size - TL::Count_R<R_TYPEs_t, int> + 1));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 0>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 1>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 2>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 3>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 4>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 5>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 6>, float>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 7>, bool>));
+    }
+    {
+        using R_TYPEs_t = RANDOM_TYPE4s_t;
+        using removes_t = TL::RemoveAllCopy_R<R_TYPEs_t, int, char>;
+        EXPECT_EQ(removes_t::size, (R_TYPEs_t::size - TL::Count_R<R_TYPEs_t, int, char> + 2));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 0>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 1>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 2>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 3>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 4>, float>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 5>, bool>));
+    }
+    {
+        using R_TYPEs_t = RANDOM_TYPE4s_t;
+        using removes_t = TL::RemoveAllCopy_R<R_TYPEs_t, int, char, bool>;
+        EXPECT_EQ(removes_t::size, (R_TYPEs_t::size - TL::Count_R<R_TYPEs_t, int, char, bool> + 3));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 0>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 1>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 2>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 3>, float>));
+    }
+    {
+        using R_TYPEs_t = RANDOM_TYPE4s_t;
+        using removes_t = TL::RemoveAllCopy_R<R_TYPEs_t, int, char, bool, float>;
+        EXPECT_EQ(removes_t::size, 4);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 0>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 1>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 2>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 3>, float>));
+    }
+}
+
+TEST(TypesList, Refine) {
+    {
+        using R_TYPEs_t = RANDOM_TYPE1s_t;
+        using removes_t = TL::Refine_R<R_TYPEs_t>;
+        EXPECT_EQ(removes_t::size, 1);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 0>, int>));
+    }
+    {
+        using R_TYPEs_t = RANDOM_TYPE2s_t;
+        using removes_t = TL::Refine_R<R_TYPEs_t>;
+        EXPECT_EQ(removes_t::size, 4);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 0>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 1>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 2>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 3>, float>));
+    }
+    {
+        using R_TYPEs_t = RANDOM_TYPE3s_t;
+        using removes_t = TL::Refine_R<R_TYPEs_t>;
+        EXPECT_EQ(removes_t::size, 4);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 0>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 1>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 2>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 3>, float>));
+    }
+    {
+        using R_TYPEs_t = RANDOM_TYPE4s_t;
+        using removes_t = TL::Refine_R<R_TYPEs_t>;
+        EXPECT_EQ(removes_t::size, 4);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 0>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 1>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 2>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<removes_t, 3>, float>));
+    }
+}
+
+int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

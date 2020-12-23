@@ -51,7 +51,7 @@ BreakStringLiterals: false
 
 ColumnLimit: 160
 
-# Регулярное выражение, по которому можно определить комментарии, не нуждающиеся в автоформатировании
+# Регулярное выражение, по которому можно определить комментарии, не нуждающиеся в автоформатирование
 CommentPragmas: '^ STATIC_COMMENT:'
 CompactNamespaces: false
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
@@ -66,7 +66,7 @@ ForEachMacros: [ foreach, Q_FOREACH, BOOST_FOREACH ]
 # [INFO] довольно опасная опция! Есть смысл использовать только с нижележащим правилом
 SortIncludes: false
 
-# [INFO] формирует правила формирования списка файлов включения, на основании регулярного выражения + приоритера
+# [INFO] формирует правила формирования списка файлов включения, на основании регулярного выражения + приоритета
 IncludeCategories:
   - Regex:           '^"(llvm|llvm-c|clang|clang-c)/'
     Priority:        2

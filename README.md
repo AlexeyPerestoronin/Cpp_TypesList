@@ -1,8 +1,8 @@
 # TypesList
-It is a library provided structs and type-constructor-struct for manipulation of types as if a list-data-structure is used
+It is a library provided structs (and type-constructor-struct) for manipulation of types as if a list-data-structure is used
 ***
 ## Content (Plan)
-* [ ] namespace: TL:
+* [x] namespace: TL:
     * [x] struct: Always(True|False) - returns boolean (true/false) regardless of type
     * [x] struct: TypeInfo - if Type is compatibility - provides information about type; compilation error - vise versa
     * [x] struct: TypesList - base struct of TL-logic is one list of cpp-types
@@ -18,11 +18,11 @@ It is a library provided structs and type-constructor-struct for manipulation of
     * [x] struct: RemoveByIndex - removes type from target TypesList by index
     * [x] struct: RemoveFromSize - removes the types since from-index to from+size-index from target TypesList
     * [x] struct: CutFromSize - cuts out the types since from-index to from+size-index from target TypesList
-    * [x] struct: Count - counts the quantity of entries of the Type in target TypesList
-    * [ ] struct: Remove
-    * [ ] struct: RemoveAll
-    * [ ] struct: RemoveAllCopy
-    * [ ] struct: RemoveAllCopies
+    * [x] struct: Count - counts the quantity of entries of the Type (or Types) in target TypesList
+    * [x] struct: Remove - removes the Type from target TypesList, leave only a given quantity of occurrences
+    * [x] struct: RemoveAll - removes all occurrences of the Type (or Types) from target TypesList
+    * [x] struct: RemoveAllCopy - leaves only one occurrences of the Type (or Types) in target TypesList
+    * [x] struct: Refine - refine TypesList making its more beautiful: (1) only one occurrence for each types
 ### Suggestions for improvement
 * [ ] develop and use `sc_string`-cpp-class which provides static-compiler-strings, and use it for modernize static assertion messages as:
     - before: `static_assert(!std::is_same_v<NullType, TypesList>, "Type is not existent inside TypesList");`
