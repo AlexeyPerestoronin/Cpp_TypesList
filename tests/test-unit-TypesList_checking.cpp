@@ -4,7 +4,6 @@
 // test types lists
 using UINTs_t = TL::CreateTypesList_R<uint8_t, uint16_t, uint32_t, uint64_t>;
 using INTs_t = TL::CreateTypesList_R<int8_t, int16_t, int32_t, int64_t>;
-using ALL_INTs_t = TL::AppendBack_R<UINTs_t, INTs_t>;
 
 TEST(TypesList, Size) {
     EXPECT_EQ(UINTs_t::size, 4);
@@ -62,6 +61,99 @@ TEST(TypesList, GetIndexByType) {
     EXPECT_NE((TL::GetIndexByType_R<INTs_t, int64_t>), 0);
     //EXPECT_NE((TL::GetIndexByType_R<INTs_t, std::string>), 0); // compilation error
 }
+
+TEST(TypesList, CreateTypesList) {
+    {
+        using ALL_INTs_t = TL::CreateTypesList_R<INTs_t>;
+        EXPECT_EQ(ALL_INTs_t::size, INTs_t::size);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int8_t>), 0);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int16_t>), 1);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int32_t>), 2);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int64_t>), 3);
+    }
+    {
+        using ALL_INTs_t = TL::CreateTypesList_R<INTs_t, double>;
+        EXPECT_EQ(ALL_INTs_t::size, INTs_t::size + 1);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int8_t>), 0);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int16_t>), 1);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int32_t>), 2);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int64_t>), 3);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, double>), 4);
+    }
+    {
+        using ALL_INTs_t = TL::CreateTypesList_R<double, INTs_t>;
+        EXPECT_EQ(ALL_INTs_t::size, INTs_t::size + 1);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, double>), 0);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int8_t>), 1);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int16_t>), 2);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int32_t>), 3);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int64_t>), 4);
+    }
+    {
+        using ALL_INTs_t = TL::CreateTypesList_R<INTs_t, UINTs_t>;
+        EXPECT_EQ(ALL_INTs_t::size, INTs_t::size + UINTs_t::size);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int8_t>), 0);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int16_t>), 1);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int32_t>), 2);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int64_t>), 3);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, uint8_t>), 4);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, uint16_t>), 5);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, uint32_t>), 6);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, uint64_t>), 7);
+    }
+    using CHARs_t = TL::CreateTypesList_R<char, char16_t, char32_t>;
+    {
+        using ALL_INTs_t = TL::CreateTypesList_R<INTs_t, UINTs_t, CHARs_t>;
+        EXPECT_EQ(ALL_INTs_t::size, INTs_t::size + UINTs_t::size + CHARs_t::size);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int8_t>), 0);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int16_t>), 1);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int32_t>), 2);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int64_t>), 3);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, uint8_t>), 4);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, uint16_t>), 5);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, uint32_t>), 6);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, uint64_t>), 7);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, char>), 8);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, char16_t>), 9);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, char32_t>), 10);
+    }
+    {
+        using ALL_INTs_t = TL::CreateTypesList_R<double, INTs_t, UINTs_t, CHARs_t, float>;
+        EXPECT_EQ(ALL_INTs_t::size, INTs_t::size + UINTs_t::size + CHARs_t::size + 2);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, double>), 0);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int8_t>), 1);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int16_t>), 2);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int32_t>), 3);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int64_t>), 4);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, uint8_t>), 5);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, uint16_t>), 6);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, uint32_t>), 7);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, uint64_t>), 8);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, char>), 9);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, char16_t>), 10);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, char32_t>), 11);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, float>), 12);
+    }
+    {
+        using ALL_INTs_t = TL::CreateTypesList_R<double, INTs_t, UINTs_t, float, CHARs_t>;
+        EXPECT_EQ(ALL_INTs_t::size, INTs_t::size + UINTs_t::size + CHARs_t::size + 2);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, double>), 0);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int8_t>), 1);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int16_t>), 2);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int32_t>), 3);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, int64_t>), 4);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, uint8_t>), 5);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, uint16_t>), 6);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, uint32_t>), 7);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, uint64_t>), 8);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, float>), 9);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, char>), 10);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, char16_t>), 11);
+        EXPECT_EQ((TL::GetIndexByType_R<ALL_INTs_t, char32_t>), 12);
+    }
+}
+
+using ALL_INTs_t = TL::CreateTypesList_R<UINTs_t, INTs_t>;
 
 TEST(TypesList, IsInList) {
     EXPECT_TRUE((TL::IsInList_R<UINTs_t, uint8_t>));

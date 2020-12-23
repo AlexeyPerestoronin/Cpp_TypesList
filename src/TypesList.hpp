@@ -163,8 +163,9 @@ namespace TL {
     // SECTION: CreateTypesList
     // brief: creates arbitrary length list of types
     // Result: list of target types
-    // example 1: using UINTs_t = TL::CreateTypesList<uint8_t, uint16_t, uint32_t, uint64_t>::Result;
-    // example 2: using INTs_t = TL::CreateTypesList<int8_t, int16_t, int32_t, int64_t>::Result;
+    // example 1: using UINTs_t = TL::CreateTypesList_R<uint8_t, uint16_t, uint32_t, uint64_t>; // --> [uint8_t, uint16_t, uint32_t, uint64_t]
+    // example 2: using INTs_t = TL::CreateTypesList_R<int8_t, int16_t, int32_t, int64_t>; // --> [int8_t, int16_t, int32_t, int64_t]
+    // example 3: using ALL_INTs_t TL::TL::CreateTypesList_R<INTs_t, UINTs_t>; // --> [int8_t, int16_t, int32_t, int64_t, uint8_t, uint16_t, uint32_t, uint64_t]
 
 #define EXPLICIT_TYPE_INFO TYPE_INFO("CreateTypesList", "creates arbitrary length list of types");
 
@@ -172,6 +173,30 @@ namespace TL {
     struct CreateTypesList {
         EXPLICIT_TYPE_INFO
         using Result = TypesList_R<Type, typename CreateTypesList<OtherTypes...>::Result>;
+    };
+
+    template<class Head, class Tail, class... OtherTypes>
+    struct CreateTypesList<TypesList<Head, Tail>, OtherTypes...> {
+        EXPLICIT_TYPE_INFO
+        using Result = TypesList_R<Head, typename CreateTypesList<Tail, OtherTypes...>::Result>;
+    };
+
+    template<class Head, class... OtherTypes>
+    struct CreateTypesList<TypesList<Head, NullType>, OtherTypes...> {
+        EXPLICIT_TYPE_INFO
+        using Result = TypesList_R<Head, typename CreateTypesList<OtherTypes...>::Result>;
+    };
+
+    template<class Head, class Tail>
+    struct CreateTypesList<TypesList<Head, Tail>> {
+        EXPLICIT_TYPE_INFO
+        using Result = TypesList_R<Head, Tail>;
+    };
+
+    template<class Head>
+    struct CreateTypesList<TypesList<Head, NullType>> {
+        EXPLICIT_TYPE_INFO
+        using Result = TypesList_R<Head, NullType>;
     };
 
     template<class Type>
@@ -883,7 +908,7 @@ namespace TL {
     // example 2: TL::Refine_R<RANDOM_TYPE3s_t>; // --> [int, bool, char, float]
     // example 4: TL::Refine_R<RANDOM_TYPE4s_t>; // --> [char, int, bool, float]
 
-#define EXPLICIT_TYPE_INFO TYPE_INFO("Refine", "...");
+#define EXPLICIT_TYPE_INFO TYPE_INFO("Refine", "refine TypesList making its more beautiful: (1) only one occurrence for each types");
 
     template<class TypesList_t>
     struct Refine {
