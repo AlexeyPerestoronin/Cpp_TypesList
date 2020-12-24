@@ -925,6 +925,130 @@ namespace TL {
     template<class TypesList_t>
     using Refine_R = typename Refine<TypesList_t>::Result;
 #pragma endregion
+
+#pragma region Replace
+    // SECTION: Replace
+    // brief: replaces Before-type to After-type in target TypesList, leaved only a given quantity occurrences
+    // note 1: using RANDOM_TYPE1s_t = TL::CreateTypesList_R<int, int, int, int>;
+    // note 2: using RANDOM_TYPE4s_t = TL::CreateTypesList_R<char, int, int, char, char, bool, bool, int, float, bool>;
+    // example 1: TL::Replace_R<RANDOM_TYPE1s_t, int, double, 0>; // --> [double, double, double, double]
+    // example 1: TL::Replace_R<RANDOM_TYPE1s_t, int, double, 1>; // --> [int, double, double, double]
+    // example 1: TL::Replace_R<RANDOM_TYPE1s_t, int, double, 2>; // --> [int, int, double, double]
+    // example 1: TL::Replace_R<RANDOM_TYPE1s_t, int, double, 3>; // --> [int, int, int, double]
+    // example 1: TL::Replace_R<RANDOM_TYPE1s_t, int, double, 4>; // --> [int, int, int, int]
+    // example 1: TL::Replace_R<RANDOM_TYPE1s_t, int, double, UINT8_MAX>; // --> [int, int, int, int]
+    // example 1: TL::Replace_R<RANDOM_TYPE2s_t, int, double, 0>; // --> [char, double, double, char, char, bool, bool, double, float, bool]
+
+#define EXPLICIT_TYPE_INFO TYPE_INFO("Replace", "replaces Before-type to After-type in target TypesList, leaved only a given quantity occurrences");
+
+    template<class TypesList_t, class Before, class After, uint8_t quantity>
+    struct Replace {
+        EXPLICIT_TYPE_INFO
+        static_assert(AlwaysFalse_tR<TypesList_t>, "forbidden to use Replace with not TypesList-struct");
+    };
+
+    template<class Head, class Tail, class Before, class After, uint8_t quantity>
+    struct Replace<TypesList<Head, Tail>, Before, After, quantity> {
+        EXPLICIT_TYPE_INFO
+        using Result = TypesList<Head, typename Replace<Tail, Before, After, quantity>::Result>;
+    };
+
+    template<class Tail, class Before, class After, uint8_t quantity>
+    struct Replace<TypesList<Before, Tail>, Before, After, quantity> {
+        EXPLICIT_TYPE_INFO
+        using Result = TypesList<Before, typename Replace<Tail, Before, After, quantity - 1>::Result>;
+    };
+
+    template<class Tail, class Before, class After>
+    struct Replace<TypesList<Before, Tail>, Before, After, 0> {
+        EXPLICIT_TYPE_INFO
+        using Result = TypesList<After, typename Replace<Tail, Before, After, 0>::Result>;
+    };
+
+    template<class Before, class After, uint8_t quantity>
+    struct Replace<NullType, Before, After, quantity> {
+        EXPLICIT_TYPE_INFO
+        using Result = NullType;
+    };
+
+#undef EXPLICIT_TYPE_INFO
+
+    template<class TypesList_t, class Before, class After, uint8_t quantity>
+    using Replace_R = typename Replace<TypesList_t, Before, After, quantity>::Result;
+
+    template<class TypesList_t, class Before, class After>
+    using ReplaceAll_R = Replace_R<TypesList_t, Before, After, 0>;
+#pragma endregion
+
+#pragma region Swap
+    // SECTION: Swap
+    // brief: swaps two types by its indexes in target TypesList
+    // note 1: using TEST_TYPEs_t = TL::CreateTypesList_R<char, int, bool, double, float>;
+    // example 1: TL::Swap_R<TEST_TYPEs_t, 0, 1>; // --> [int, char, bool, double, float]
+    // example 1: TL::Swap_R<TEST_TYPEs_t, 1, 3>; // --> [char, double, bool, int, float]
+    // example 1: TL::Swap_R<TEST_TYPEs_t, 0, 4>; // --> [float, int, bool, double, char]
+
+#define EXPLICIT_TYPE_INFO TYPE_INFO("Swap", "swaps two types by its indexes in target TypesList");
+
+    template<class TypesList_t, uint8_t index1, uint8_t index2>
+    struct Swap {
+        EXPLICIT_TYPE_INFO
+        static_assert(AlwaysFalse_tR<TypesList_t>, "forbidden to use Swap with not TypesList-struct");
+    };
+
+    template<class Head, class Tail, uint8_t index1, uint8_t index2>
+    struct Swap<TypesList<Head, Tail>, index1, index2> {
+        EXPLICIT_TYPE_INFO
+        private:
+        using TypesList_t = TypesList<Head, Tail>;
+        using Type1 = GetTypeByIndex_R<TypesList_t, index1>;
+        using Type2 = GetTypeByIndex_R<TypesList_t, index2>;
+
+        public:
+        using Result = InsertByIndex_R<RemoveByIndex_R<InsertByIndex_R<RemoveByIndex_R<TypesList_t, index2>, Type1, index2>, index1>, Type2, index1>;
+    };
+
+#undef EXPLICIT_TYPE_INFO
+
+    template<class TypesList_t, uint8_t index1, uint8_t index2>
+    using Swap_R = typename Swap<TypesList_t, index1, index2>::Result;
+#pragma endregion
+
+#pragma region SwapTypes
+    // SECTION: SwapTypes
+    // brief: swaps two types in target TypesList
+    // note 1: using TEST_TYPEs_t = TL::CreateTypesList_R<int, char, bool, bool, double, float>;
+    // example 1: TL::SwapTypes_R<TEST_TYPEs_t, int, char>; // --> [char, int, bool, bool, double, float]
+    // example 1: TL::SwapTypes_R<TEST_TYPEs_t, char, int>; // --> [char, int, bool, bool, double, float]
+    // example 1: TL::SwapTypes_R<TEST_TYPEs_t, int, double>; // --> [double, char, bool, bool, int, float]
+    // example 1: TL::SwapTypes_R<TEST_TYPEs_t, int, bool>; // compilation error
+
+#define EXPLICIT_TYPE_INFO TYPE_INFO("SwapTypes", "swaps two types in target TypesList");
+
+    template<class TypesList_t, class Type1, class Type2>
+    struct SwapTypes {
+        EXPLICIT_TYPE_INFO
+        static_assert(AlwaysFalse_tR<TypesList_t>, "forbidden to use SwapTypes with not TypesList-struct");
+    };
+
+    template<class Head, class Tail, class Type1, class Type2>
+    struct SwapTypes<TypesList<Head, Tail>, Type1, Type2> {
+        EXPLICIT_TYPE_INFO
+        private:
+        static_assert(!std::is_same_v<Type1, Type2>, "swapping types cannot be same");
+        using TypesList_t = TypesList<Head, Tail>;
+        static_assert((Count_R<TypesList_t, Type1> == 1), "first type to swap must have only one occurrence inside target TypesList");
+        static_assert((Count_R<TypesList_t, Type2> == 1), "second type to swap must have only one occurrence inside target TypesList");
+
+        public:
+        using Result = Swap_R<TypesList_t, GetIndexByType_R<TypesList_t, Type1>, GetIndexByType_R<TypesList_t, Type2>>;
+    };
+
+#undef EXPLICIT_TYPE_INFO
+
+    template<class TypesList_t, class Type1, class Type2>
+    using SwapTypes_R = typename SwapTypes<TypesList_t, Type1, Type2>::Result;
+#pragma endregion
 } // namespace TL
 
 #endif // __TYPES_LIST__

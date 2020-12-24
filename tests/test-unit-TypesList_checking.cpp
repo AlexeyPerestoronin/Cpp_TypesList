@@ -1230,6 +1230,322 @@ TEST(TypesList, Refine) {
     }
 }
 
+TEST(TypesList, Replace) {
+    {
+        using before_t = int;
+        using after_t = double;
+        constexpr uint8_t quantity = 0;
+        using R_TYPEs_t = RANDOM_TYPE1s_t;
+        using replaced = TL::Replace_R<R_TYPEs_t, before_t, after_t, quantity>;
+        EXPECT_EQ(replaced::size, R_TYPEs_t::size);
+        EXPECT_EQ((TL::Count_R<replaced, before_t>), quantity);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 0>, after_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 1>, after_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 2>, after_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 3>, after_t>));
+    }
+    {
+        using before_t = int;
+        using after_t = double;
+        constexpr uint8_t quantity = 1;
+        using R_TYPEs_t = RANDOM_TYPE1s_t;
+        using replaced = TL::Replace_R<R_TYPEs_t, before_t, after_t, quantity>;
+        EXPECT_EQ(replaced::size, R_TYPEs_t::size);
+        EXPECT_EQ((TL::Count_R<replaced, before_t>), quantity);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 0>, before_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 1>, after_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 2>, after_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 3>, after_t>));
+    }
+    {
+        using before_t = int;
+        using after_t = double;
+        constexpr uint8_t quantity = 2;
+        using R_TYPEs_t = RANDOM_TYPE1s_t;
+        using replaced = TL::Replace_R<R_TYPEs_t, before_t, after_t, quantity>;
+        EXPECT_EQ(replaced::size, R_TYPEs_t::size);
+        EXPECT_EQ((TL::Count_R<replaced, before_t>), quantity);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 0>, before_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 1>, before_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 2>, after_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 3>, after_t>));
+    }
+    {
+        using before_t = int;
+        using after_t = double;
+        constexpr uint8_t quantity = 3;
+        using R_TYPEs_t = RANDOM_TYPE1s_t;
+        using replaced = TL::Replace_R<R_TYPEs_t, before_t, after_t, quantity>;
+        EXPECT_EQ(replaced::size, R_TYPEs_t::size);
+        EXPECT_EQ((TL::Count_R<replaced, before_t>), quantity);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 0>, before_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 1>, before_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 2>, before_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 3>, after_t>));
+    }
+    {
+        using before_t = int;
+        using after_t = double;
+        constexpr uint8_t quantity = 4;
+        using R_TYPEs_t = RANDOM_TYPE1s_t;
+        using replaced = TL::Replace_R<R_TYPEs_t, before_t, after_t, quantity>;
+        EXPECT_EQ(replaced::size, R_TYPEs_t::size);
+        EXPECT_EQ((TL::Count_R<replaced, before_t>), quantity);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 0>, before_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 1>, before_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 2>, before_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 3>, before_t>));
+    }
+    {
+        using before_t = int;
+        using after_t = double;
+        constexpr uint8_t quantity = UINT8_MAX;
+        using R_TYPEs_t = RANDOM_TYPE1s_t;
+        using replaced = TL::Replace_R<R_TYPEs_t, before_t, after_t, quantity>;
+        EXPECT_EQ(replaced::size, R_TYPEs_t::size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 0>, before_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 1>, before_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 2>, before_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 3>, before_t>));
+    }
+    {
+        using before_t = int;
+        using after_t = double;
+        constexpr uint8_t quantity = 0;
+        using R_TYPEs_t = RANDOM_TYPE4s_t;
+        using replaced = TL::Replace_R<R_TYPEs_t, before_t, after_t, quantity>;
+        EXPECT_EQ(replaced::size, R_TYPEs_t::size);
+        EXPECT_EQ((TL::Count_R<replaced, before_t>), quantity);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 0>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 1>, after_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 2>, after_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 3>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 4>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 5>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 6>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 7>, after_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 8>, float>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 9>, bool>));
+    }
+    {
+        using before_t = int;
+        using after_t = double;
+        constexpr uint8_t quantity = 1;
+        using R_TYPEs_t = RANDOM_TYPE4s_t;
+        using replaced = TL::Replace_R<R_TYPEs_t, before_t, after_t, quantity>;
+        EXPECT_EQ(replaced::size, R_TYPEs_t::size);
+        EXPECT_EQ((TL::Count_R<replaced, before_t>), quantity);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 0>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 1>, before_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 2>, after_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 3>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 4>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 5>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 6>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 7>, after_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 8>, float>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 9>, bool>));
+    }
+    {
+        using before_t = int;
+        using after_t = double;
+        constexpr uint8_t quantity = 2;
+        using R_TYPEs_t = RANDOM_TYPE4s_t;
+        using replaced = TL::Replace_R<R_TYPEs_t, before_t, after_t, quantity>;
+        EXPECT_EQ(replaced::size, R_TYPEs_t::size);
+        EXPECT_EQ((TL::Count_R<replaced, before_t>), quantity);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 0>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 1>, before_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 2>, before_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 3>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 4>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 5>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 6>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 7>, after_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 8>, float>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 9>, bool>));
+    }
+    {
+        using before_t = int;
+        using after_t = double;
+        constexpr uint8_t quantity = 3;
+        using R_TYPEs_t = RANDOM_TYPE4s_t;
+        using replaced = TL::Replace_R<R_TYPEs_t, before_t, after_t, quantity>;
+        EXPECT_EQ(replaced::size, R_TYPEs_t::size);
+        EXPECT_EQ((TL::Count_R<replaced, before_t>), quantity);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 0>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 1>, before_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 2>, before_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 3>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 4>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 5>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 6>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 7>, before_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 8>, float>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 9>, bool>));
+    }
+    {
+        using before_t = int;
+        using after_t = double;
+        constexpr uint8_t quantity = INT8_MAX;
+        using R_TYPEs_t = RANDOM_TYPE4s_t;
+        using replaced = TL::Replace_R<R_TYPEs_t, before_t, after_t, quantity>;
+        EXPECT_EQ(replaced::size, R_TYPEs_t::size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 0>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 1>, before_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 2>, before_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 3>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 4>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 5>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 6>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 7>, before_t>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 8>, float>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<replaced, 9>, bool>));
+    }
+}
+
+TEST(TypesList, Swap) {
+    using TEST_TYPEs_t = TL::CreateTypesList_R<char, int, bool, double, float>;
+    {
+        constexpr uint8_t index1 = 0;
+        constexpr uint8_t index2 = 1;
+        using R_TYPEs_t = TEST_TYPEs_t;
+        using swapped = TL::Swap_R<R_TYPEs_t, index1, index2>;
+        EXPECT_EQ(swapped::size, R_TYPEs_t::size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 0>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 1>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 2>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 3>, double>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 4>, float>));
+    }
+    {
+        constexpr uint8_t index1 = 0;
+        constexpr uint8_t index2 = 2;
+        using R_TYPEs_t = TEST_TYPEs_t;
+        using swapped = TL::Swap_R<R_TYPEs_t, index1, index2>;
+        EXPECT_EQ(swapped::size, R_TYPEs_t::size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 0>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 1>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 2>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 3>, double>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 4>, float>));
+    }
+    {
+        constexpr uint8_t index1 = 0;
+        constexpr uint8_t index2 = 3;
+        using R_TYPEs_t = TEST_TYPEs_t;
+        using swapped = TL::Swap_R<R_TYPEs_t, index1, index2>;
+        EXPECT_EQ(swapped::size, R_TYPEs_t::size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 0>, double>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 1>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 2>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 3>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 4>, float>));
+    }
+    {
+        constexpr uint8_t index1 = 0;
+        constexpr uint8_t index2 = 4;
+        using R_TYPEs_t = TEST_TYPEs_t;
+        using swapped = TL::Swap_R<R_TYPEs_t, index1, index2>;
+        EXPECT_EQ(swapped::size, R_TYPEs_t::size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 0>, float>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 1>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 2>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 3>, double>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 4>, char>));
+    }
+    {
+        constexpr uint8_t index1 = 0;
+        constexpr uint8_t index2 = 5;
+        using R_TYPEs_t = TEST_TYPEs_t;
+        //using swapped = TL::Swap_R<R_TYPEs_t, index1, index2>; // compilation error
+    }
+    {
+        constexpr uint8_t index1 = 3;
+        constexpr uint8_t index2 = 2;
+        using R_TYPEs_t = TEST_TYPEs_t;
+        //using swapped = TL::Swap_R<R_TYPEs_t, index1, index2>; // compilation error
+    }
+    {
+        constexpr uint8_t index1 = 1;
+        constexpr uint8_t index2 = 2;
+        using R_TYPEs_t = TEST_TYPEs_t;
+        using swapped = TL::Swap_R<R_TYPEs_t, index1, index2>;
+        EXPECT_EQ(swapped::size, R_TYPEs_t::size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 0>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 1>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 2>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 3>, double>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 4>, float>));
+    }
+    {
+        constexpr uint8_t index1 = 3;
+        constexpr uint8_t index2 = 4;
+        using R_TYPEs_t = TEST_TYPEs_t;
+        using swapped = TL::Swap_R<R_TYPEs_t, index1, index2>;
+        EXPECT_EQ(swapped::size, R_TYPEs_t::size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 0>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 1>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 2>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 3>, float>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 4>, double>));
+    }
+    {
+        constexpr uint8_t index1 = 0;
+        constexpr uint8_t index2 = 1;
+        using R_TYPEs_t = TL::CreateTypesList_R<int, char>;
+        using swapped = TL::Swap_R<R_TYPEs_t, index1, index2>;
+        EXPECT_EQ(swapped::size, R_TYPEs_t::size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 0>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 1>, int>));
+    }
+}
+
+TEST(TypesList, SwapTypes) {
+    using TEST_TYPEs_t = TL::CreateTypesList_R<int, char, bool, bool, double, float>;
+    //using swapped = TL::SwapTypes_R<TEST_TYPEs_t, int, bool>; // compilation error
+    //using swapped = TL::SwapTypes_R<TEST_TYPEs_t, bool, int>; // compilation error
+    {
+        using Type1 = int;
+        using Type2 = char;
+        using R_TYPEs_t = TEST_TYPEs_t;
+        using swapped = TL::SwapTypes_R<R_TYPEs_t, Type1, Type2>;
+        EXPECT_EQ(swapped::size, R_TYPEs_t::size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 0>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 1>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 2>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 3>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 4>, double>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 5>, float>));
+    }
+    {
+        using Type1 = char;
+        using Type2 = int;
+        using R_TYPEs_t = TEST_TYPEs_t;
+        using swapped = TL::SwapTypes_R<R_TYPEs_t, Type1, Type2>;
+        EXPECT_EQ(swapped::size, R_TYPEs_t::size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 0>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 1>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 2>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 3>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 4>, double>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 5>, float>));
+    }
+    {
+        using Type1 = char;
+        using Type2 = double;
+        using R_TYPEs_t = TEST_TYPEs_t;
+        using swapped = TL::SwapTypes_R<R_TYPEs_t, Type1, Type2>;
+        EXPECT_EQ(swapped::size, R_TYPEs_t::size);
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 0>, int>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 1>, double>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 2>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 3>, bool>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 4>, char>));
+        EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 5>, float>));
+    }
+}
+
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

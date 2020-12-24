@@ -23,6 +23,10 @@ It is a library provided structs (and type-constructor-struct) for manipulation 
     * [x] struct: RemoveAll - removes all occurrences of the Type (or Types) from target TypesList
     * [x] struct: RemoveAllCopy - leaves only one occurrences of the Type (or Types) in target TypesList
     * [x] struct: Refine - refine TypesList making its more beautiful: (1) only one occurrence for each types
+    * [x] struct: Replace - replaces Before-type to After-type in target TypesList, leaved only a given quantity occurrences
+    * [x] struct: ReplaceAll - replaces Before-type to After-type in target TypesList
+    * [x] struct: Swap - swaps two types by its indexes in target TypesList
+    * [x] struct: SwapTypes - swaps two types in target TypesList
 ### Suggestions for improvement
 * [ ] develop and use `sc_string`-cpp-class which provides static-compiler-strings, and use it for modernize static assertion messages as:
     - before: `static_assert(!std::is_same_v<NullType, TypesList>, "Type is not existent inside TypesList");`
