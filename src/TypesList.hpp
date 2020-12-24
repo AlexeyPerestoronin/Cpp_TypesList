@@ -151,12 +151,8 @@ namespace TL {
 
         using Head = H;
         using Tail = T;
-        using Result = TypesList<Head, Tail>;
         constexpr static uint8_t size = 1 + Tail::size;
     };
-
-    template<class Head, class Tail>
-    using TypesList_R = typename TypesList<Head, Tail>::Result;
 #pragma endregion
 
 #pragma region CreateTypesList
@@ -172,37 +168,37 @@ namespace TL {
     template<class Type, class... OtherTypes>
     struct CreateTypesList {
         EXPLICIT_TYPE_INFO
-        using Result = TypesList_R<Type, typename CreateTypesList<OtherTypes...>::Result>;
+        using Result = TypesList<Type, typename CreateTypesList<OtherTypes...>::Result>;
     };
 
     template<class Head, class Tail, class... OtherTypes>
     struct CreateTypesList<TypesList<Head, Tail>, OtherTypes...> {
         EXPLICIT_TYPE_INFO
-        using Result = TypesList_R<Head, typename CreateTypesList<Tail, OtherTypes...>::Result>;
+        using Result = TypesList<Head, typename CreateTypesList<Tail, OtherTypes...>::Result>;
     };
 
     template<class Head, class... OtherTypes>
     struct CreateTypesList<TypesList<Head, NullType>, OtherTypes...> {
         EXPLICIT_TYPE_INFO
-        using Result = TypesList_R<Head, typename CreateTypesList<OtherTypes...>::Result>;
+        using Result = TypesList<Head, typename CreateTypesList<OtherTypes...>::Result>;
     };
 
     template<class Head, class Tail>
     struct CreateTypesList<TypesList<Head, Tail>> {
         EXPLICIT_TYPE_INFO
-        using Result = TypesList_R<Head, Tail>;
+        using Result = TypesList<Head, Tail>;
     };
 
     template<class Head>
     struct CreateTypesList<TypesList<Head, NullType>> {
         EXPLICIT_TYPE_INFO
-        using Result = TypesList_R<Head, NullType>;
+        using Result = TypesList<Head, NullType>;
     };
 
     template<class Type>
     struct CreateTypesList<Type> {
         EXPLICIT_TYPE_INFO
-        using Result = TypesList_R<Type, NullType>;
+        using Result = TypesList<Type, NullType>;
     };
 
     template<>
