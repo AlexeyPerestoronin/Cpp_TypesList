@@ -1,7 +1,7 @@
 # TypesList
 It is a library provided structs (and type-constructor-struct) for manipulation of types as if a list-data-structure is used
 ***
-## Content (Plan)
+## Content
 * [x] namespace: TL:
     * [x] struct: Always(True|False) - returns boolean (true/false) regardless of type
     * [x] struct: TypeInfo - if Type is compatibility - provides information about type; compilation error - vise versa
