@@ -10,5 +10,4 @@ endif()
 
 set(PROJECT_CPP_STANDART "cxx_std_11")
 
-add_subdirectory(./src)
 add_subdirectory(./tests)

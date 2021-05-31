@@ -10,7 +10,7 @@ add_subdirectory(./googletest)
 include_directories("${gtest_SOURCE_DIR}/include")
 # GoogleTest: END.
 
-include_directories(../src)
+include_directories(../)
 
 file(GLOB TESTS "./test-unit-*.cpp")
 
@@ -18,6 +18,5 @@ foreach(test ${TESTS})
     get_filename_component(file_basename ${test} NAME_WE)
     add_executable(${file_basename} ${test})
     target_compile_features(${file_basename} PRIVATE ${PROJECT_CPP_STANDART})
-    target_link_libraries(${file_basename} TypeLists)
     target_link_libraries(${file_basename} gtest_main)
 endforeach()
