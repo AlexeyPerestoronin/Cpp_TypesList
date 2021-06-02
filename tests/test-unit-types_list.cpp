@@ -1,5 +1,6 @@
-#include <gtest/gtest.h>
-#include <types_list.hpp>
+#include "tests/test-unit-common.hpp"
+
+#include "types_list.hpp"
 
 // test types lists
 using UINTs_t = TL::CreateTypesList_R<uint8_t, uint16_t, uint32_t, uint64_t>;
@@ -1544,9 +1545,4 @@ TEST(TypesList, SwapTypes) {
         EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 4>, char>));
         EXPECT_TRUE((std::is_same_v<TL::GetTypeByIndex_R<swapped, 5>, float>));
     }
-}
-
-int main(int argc, char* argv[]) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
 }
